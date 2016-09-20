@@ -83,7 +83,6 @@ namespace DiscordTest
             discord.ExecuteAndWait(async () =>
             {
                 await discord.Connect(token, TokenType.Bot);
-                //await discord.Connect("MjI1Mzk4NzgxMzY4MDc0MjQx.Cronaw.PQmHl5-vT8gNNkDrEbbCJszLpQc", TokenType.Bot);
             });
         }
         private void Log(object sender, LogMessageEventArgs e)
@@ -110,7 +109,6 @@ namespace DiscordTest
         String getReply(String url, String method)
         {
             var http = (HttpWebRequest)WebRequest.Create(url);
-            http.Headers.Add("Authorization", "Bearer 402df92c7bc336c9b17ba618c9edf22e95694821");
             http.Method = method;
             var response = http.GetResponse();
 
