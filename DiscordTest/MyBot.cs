@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Commands.Permissions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DiscordTest
@@ -14,14 +16,24 @@ namespace DiscordTest
     class MyBot
     {
             DiscordClient discord;
-        public MyBot()
+        Images images;
+        public MyBot(String token, ulong allowedChannel)
         {
+            images = new Images();
             discord = new DiscordClient(x =>
             {
                 x.LogLevel = LogSeverity.Info;
                 x.LogHandler = Log;
             });
-
+            var resetEvent = new AutoResetEvent(true);
+            Timer tm = new Timer((Object state) =>
+            {
+                String getPhotos = getReply("https://api.imgur.com/3/gallery/search/?q_any=meme", "GET");
+                gallery stuff = getGalleryObject(getPhotos);
+                Random random = new Random();
+                Console.WriteLine("fired");
+                discord.GetChannel(allowedChannel).SendMessage(stuff.data[random.Next(stuff.data.Count)].link);
+            }, resetEvent,30*60*1000, 30 * 60 * 1000); 
             discord.UsingCommands(x=>
             {
                 x.PrefixChar = '!';
@@ -29,11 +41,11 @@ namespace DiscordTest
             });
             discord.MessageReceived += async (s, e) =>
             {
-                if (!e.Message.IsAuthor)
+                Console.WriteLine(e.Message.Channel.Id);
+                if (!e.Message.IsAuthor &&  e.Message.Channel.Id == allowedChannel)
                 {
-                    if (e.Message.Text.Contains("meme") && !e.Message.Text.Contains("!meme"))
+                    if (e.Message.Text.Contains("meme") && !e.Message.Text.Contains("!meme") && e.Message.IsAuthor)
                     {
-
                         String getPhotos = getReply("https://api.imgur.com/3/gallery/search/?q_any=meme", "GET");
                         gallery stuff = getGalleryObject(getPhotos);
                         Random random = new Random();
@@ -45,34 +57,33 @@ namespace DiscordTest
                         String getPhotos = getReply("https://api.imgur.com/3/gallery/search/?q_any=happy", "GET");
                         gallery stuff = getGalleryObject(getPhotos);
                         Random random = new Random();
+                        
                         await e.Channel.SendMessage(stuff.data[random.Next(stuff.data.Count)].link);
                     }
                 }
             };
             var commands = discord.GetService<CommandService>();
-            commands.CreateCommand("hello").Do( async(e) =>{
+            commands.CreateCommand("hello").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Do( async(e) =>{
                 await e.Channel.SendMessage("Hi");
             });
-            commands.CreateCommand("meme").Parameter("Type").Do(async (e) =>
+            commands.CreateCommand("pics").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Optional).Parameter("arg3", ParameterType.Optional).Do( (e) =>
             {
-                String getPhotos = getReply("https://api.imgur.com/3/gallery/search/?q_any=" + e.GetArg("Type"), "GET");
-                gallery stuff = getGalleryObject(getPhotos);
-                Random random = new Random();
-                await e.Channel.SendMessage(stuff.data[random.Next(stuff.data.Count)].link);
+                images.runCommand(e);
             });
-            commands.CreateCommand("weather").Parameter("zip").Do(async (e) =>
+            commands.CreateCommand("weather").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("zip").Do(async (e) =>
             {
                 //Console.WriteLine("testing");
-                String getWeather = getReply("http://api.openweathermap.org/data/2.5/weather?q=" + e.GetArg("zip") + "&appid=458b06cb384e991e14c7bbd0c2ca1ccc", "GET");
+                String getWeather = getReply("http://api.openweathermap.org/data/2.5/weather?q=" + e.GetArg("zip") + "&appid=" + System.Configuration.ConfigurationManager.ConnectionStrings["weathertoken"].ToString(), "GET");
                 //Console.WriteLine(getWeather);
                 weatherToday w = getWeatherObject(getWeather);
 
-                await e.Channel.SendMessage(w.name + " is " + w.main.temp);
+                await e.Channel.SendMessage(w.name + " is " + ((w.main.temp - 273.15) * 1.8 + 32) + " F");
             });
 
             discord.ExecuteAndWait(async () =>
             {
-                await discord.Connect("MjI1Mzk4NzgxMzY4MDc0MjQx.Cronaw.PQmHl5-vT8gNNkDrEbbCJszLpQc", TokenType.Bot);
+                await discord.Connect(token, TokenType.Bot);
+                //await discord.Connect("MjI1Mzk4NzgxMzY4MDc0MjQx.Cronaw.PQmHl5-vT8gNNkDrEbbCJszLpQc", TokenType.Bot);
             });
         }
         private void Log(object sender, LogMessageEventArgs e)
