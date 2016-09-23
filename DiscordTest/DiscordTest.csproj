@@ -119,6 +119,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APIs\owmAPI.cs" />
     <Compile Include="DataTypes\album.cs" />
     <Compile Include="Images.cs" />
     <Compile Include="APIs\ImgurAPI.cs" />

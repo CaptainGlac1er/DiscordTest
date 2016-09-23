@@ -15,6 +15,7 @@ namespace DiscordTest
         private Dictionary<string, Func<CommandEventArgs, Task>> methods;
         public Images()
         {
+            imgur = new APIs.ImgurAPI();
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
             queuesRunning = new List<bool>();
             methods.Add("search", async (command) => {
@@ -24,21 +25,18 @@ namespace DiscordTest
                 return;
             });
             methods.Add("queue", async (command) => {
-                /*Timer tm = new Timer((Object state) =>
-                {
-                */
                 int delay;
-                if(command.GetArg("arg3") == null || !Int32.TryParse(command.GetArg("arg3"), out delay))
+                if(command.GetArg(2) == null || !Int32.TryParse(command.GetArg(2), out delay))
                 {
                     await command.Channel.SendMessage("!meme queue <search> <delay in mins>");
                     return;
                 }
-                await command.Channel.SendMessage(command.GetArg("arg2") + "queue has been started");
+                await command.Channel.SendMessage(command.GetArg(1) + "queue has been started");
                 int queue = queuesRunning.Count;
                 queuesRunning.Add(true);
                 while (queuesRunning[queue])
                 {
-                    List<DataType.picture> pics = imgur.querySearch(command.GetArg("arg2"));
+                    List<DataType.picture> pics = imgur.querySearch(command.GetArg(2));
                     string link = pics[(new Random()).Next(pics.Count)].link;
                     await command.Channel.SendMessage(link);
                     await Task.Delay(new TimeSpan(0, delay, 0));
@@ -54,7 +52,7 @@ namespace DiscordTest
                 await command.Channel.SendMessage("All Image queues stopped");
             });
         }
-        ImgurAPI imgur = new ImgurAPI();
+        APIs.ImgurAPI imgur;
         public Dictionary<string, Func<CommandEventArgs, Task>> Methods
         {
             get
@@ -83,7 +81,10 @@ namespace DiscordTest
 
         public async void runCommand(CommandEventArgs command)
         {
-            await methods[command.GetArg("arg1")](command);
+            if (!methods.ContainsKey(command.GetArg(0)))
+                await command.Channel.SendMessage(command.GetArg(0) + " is not an command");
+            else
+                await methods[command.GetArg(0)](command);
         }
     }
 }

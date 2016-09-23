@@ -14,6 +14,8 @@ namespace DiscordTest
             {
                 case "pics":
                     return new Images();
+                case "weather":
+                    return new Weather();
             }
             return null;
         }

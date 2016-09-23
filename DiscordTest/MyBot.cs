@@ -69,14 +69,9 @@ namespace DiscordTest
             {
                 moduleBuilder.getModule("pics").runCommand(e);
             });
-            commands.CreateCommand("weather").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("zip").Do(async (e) =>
+            commands.CreateCommand("weather").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2").Do((e) =>
             {
-                //Console.WriteLine("testing");
-                String getWeather = getReply("http://api.openweathermap.org/data/2.5/weather?q=" + e.GetArg("zip") + "&appid=" + System.Configuration.ConfigurationManager.ConnectionStrings["weathertoken"].ToString(), "GET");
-                //Console.WriteLine(getWeather);
-                DataType.weatherToday w = getWeatherObject(getWeather);
-
-                await e.Channel.SendMessage(w.name + " is " + ((w.main.temp - 273.15) * 1.8 + 32) + " F");
+                moduleBuilder.getModule("weather").runCommand(e); 
             });
 
             discord.ExecuteAndWait(async () =>
