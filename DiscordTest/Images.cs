@@ -18,7 +18,7 @@ namespace DiscordTest
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
             queuesRunning = new List<bool>();
             methods.Add("search", async (command) => {
-                List<picture> pics = imgur.querySearch(command.GetArg("arg2"));
+                List<DataType.picture> pics = imgur.querySearch(command.GetArg("arg2"));
                 string link = pics[(new Random()).Next(pics.Count)].link;
                 await command.Channel.SendMessage(link);
                 return;
@@ -38,7 +38,7 @@ namespace DiscordTest
                 queuesRunning.Add(true);
                 while (queuesRunning[queue])
                 {
-                    List<picture> pics = imgur.querySearch(command.GetArg("arg2"));
+                    List<DataType.picture> pics = imgur.querySearch(command.GetArg("arg2"));
                     string link = pics[(new Random()).Next(pics.Count)].link;
                     await command.Channel.SendMessage(link);
                     await Task.Delay(new TimeSpan(0, delay, 0));

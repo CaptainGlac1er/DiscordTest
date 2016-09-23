@@ -16,7 +16,6 @@ namespace DiscordTest
     class MyBot
     {
             DiscordClient discord;
-        Images images;
         public MyBot(String token, ulong allowedChannel)
         {
             ModuleBuilder moduleBuilder = new ModuleBuilder();
@@ -29,7 +28,7 @@ namespace DiscordTest
             Timer tm = new Timer((Object state) =>
             {
                 String getPhotos = getReply("https://api.imgur.com/3/gallery/search/?q_any=meme", "GET");
-                gallery stuff = getGalleryObject(getPhotos);
+                DataType.gallery stuff = getGalleryObject(getPhotos);
                 Random random = new Random();
                 Console.WriteLine("fired");
                 discord.GetChannel(allowedChannel).SendMessage(stuff.data[random.Next(stuff.data.Count)].link);
@@ -47,7 +46,7 @@ namespace DiscordTest
                     if (e.Message.Text.Contains("meme") && !e.Message.Text.Contains("!meme") && e.Message.IsAuthor)
                     {
                         String getPhotos = getReply("https://api.imgur.com/3/gallery/search/?q_any=meme", "GET");
-                        gallery stuff = getGalleryObject(getPhotos);
+                        DataType.gallery stuff = getGalleryObject(getPhotos);
                         Random random = new Random();
                         await e.Channel.SendMessage(stuff.data[random.Next(stuff.data.Count)].link);
                     }
@@ -55,7 +54,7 @@ namespace DiscordTest
                     {
 
                         String getPhotos = getReply("https://api.imgur.com/3/gallery/search/?q_any=happy", "GET");
-                        gallery stuff = getGalleryObject(getPhotos);
+                        DataType.gallery stuff = getGalleryObject(getPhotos);
                         Random random = new Random();
                         
                         await e.Channel.SendMessage(stuff.data[random.Next(stuff.data.Count)].link);
@@ -75,7 +74,7 @@ namespace DiscordTest
                 //Console.WriteLine("testing");
                 String getWeather = getReply("http://api.openweathermap.org/data/2.5/weather?q=" + e.GetArg("zip") + "&appid=" + System.Configuration.ConfigurationManager.ConnectionStrings["weathertoken"].ToString(), "GET");
                 //Console.WriteLine(getWeather);
-                weatherToday w = getWeatherObject(getWeather);
+                DataType.weatherToday w = getWeatherObject(getWeather);
 
                 await e.Channel.SendMessage(w.name + " is " + ((w.main.temp - 273.15) * 1.8 + 32) + " F");
             });
@@ -117,14 +116,14 @@ namespace DiscordTest
             var content = sr.ReadToEnd();
             return content;
         }
-        gallery getGalleryObject(String json)
+        DataType.gallery getGalleryObject(String json)
         {
-            gallery data = JsonConvert.DeserializeObject<gallery>(json);
+            DataType.gallery data = JsonConvert.DeserializeObject<DataType.gallery>(json);
             return data;
         }
-        weatherToday getWeatherObject(String json)
+        DataType.weatherToday getWeatherObject(String json)
         {
-            return JsonConvert.DeserializeObject<weatherToday>(json);
+            return JsonConvert.DeserializeObject<DataType.weatherToday>(json);
         }
     }
 }
