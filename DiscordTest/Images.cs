@@ -12,7 +12,6 @@ namespace DiscordTest
     class Images : Module
     {
         private List<bool> queuesRunning;
-        private Dictionary<string, Func<CommandEventArgs, Task>> methods;
         public Images()
         {
             imgur = new APIs.ImgurAPI();
@@ -51,40 +50,26 @@ namespace DiscordTest
                 }
                 await command.Channel.SendMessage("All Image queues stopped");
             });
+            methods.Add("help", async (command) =>
+            {
+                await command.Channel.SendMessage(getHelp());
+            });
         }
         APIs.ImgurAPI imgur;
-        public Dictionary<string, Func<CommandEventArgs, Task>> Methods
-        {
-            get
-            {
-                return methods;
-            }
 
-            set
-            {
-                methods = value;
-            }
-        }
-
-        public string ModuleName
-        {
-            get
-            {
-                return "images";
-            }
-
-            set
-            {
-                
-            }
-        }
-
-        public async void runCommand(CommandEventArgs command)
+        public override async void runCommand(CommandEventArgs command)
         {
             if (!methods.ContainsKey(command.GetArg(0)))
+            {
                 await command.Channel.SendMessage(command.GetArg(0) + " is not an command");
+            }
             else
                 await methods[command.GetArg(0)](command);
+        }
+
+        public override string getHelp()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -9,7 +9,6 @@ namespace DiscordTest
 {
     class Weather : Module
     {
-        private Dictionary<string, Func<CommandEventArgs, Task>> methods;
         APIs.owmAPI owm;
         public Weather()
         {
@@ -20,34 +19,18 @@ namespace DiscordTest
                 DataType.weatherToday curWeather = owm.querySearch(command.GetArg(1));
                 await command.Channel.SendMessage(curWeather.name + " is " + ((curWeather.main.temp - 273.15) * 1.8 + 32) + " F");
             });
+            methods.Add("help", async (command) =>
+            {
+                await command.Channel.SendMessage(getHelp());
+            });
         }
-        public Dictionary<string, Func<CommandEventArgs, Task>> Methods
+
+        public override string getHelp()
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
+            throw new NotImplementedException();
         }
 
-        public string ModuleName
-        {
-            get
-            {
-                return "Weather";
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public async void runCommand(CommandEventArgs command)
+        public override async void runCommand(CommandEventArgs command)
         {
             if (!methods.ContainsKey(command.GetArg(0)))
                 await command.Channel.SendMessage(command.GetArg(0) + " is not an command");

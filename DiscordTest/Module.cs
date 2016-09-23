@@ -8,13 +8,11 @@ using Discord.Commands;
 
 namespace DiscordTest
 {
-    interface Module
+    abstract class Module
     {
-        string ModuleName { get; set; }
-        Dictionary<string, Func<CommandEventArgs, Task>> Methods {
-            get;
-            set;
-        }
-        void runCommand(CommandEventArgs command);
+
+        public abstract string getHelp();
+        protected Dictionary<string, Func<CommandEventArgs, Task>> methods;
+        public abstract void runCommand(CommandEventArgs command);
     }
 }
