@@ -18,9 +18,11 @@ namespace DiscordTest
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
             queuesRunning = new List<bool>();
             methods.Add("search", async (command) => {
-                List<DataType.picture> pics = imgur.querySearch(command.GetArg("arg2"));
+                List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
+                await command.Channel.SendMessage(command.User.Name + " searched for " + command.GetArg(1));
                 string link = pics[(new Random()).Next(pics.Count)].link;
                 await command.Channel.SendMessage(link);
+                await command.Message.Delete();
                 return;
             });
             methods.Add("queue", async (command) => {
@@ -33,6 +35,7 @@ namespace DiscordTest
                 await command.Channel.SendMessage(command.GetArg(1) + "queue has been started");
                 int queue = queuesRunning.Count;
                 queuesRunning.Add(true);
+                await command.Message.Delete();
                 while (queuesRunning[queue])
                 {
                     List<DataType.picture> pics = imgur.querySearch(command.GetArg(2));
@@ -42,17 +45,19 @@ namespace DiscordTest
                 }
                 /*}, new AutoResetEvent(true), Int32.Parse(command.GetArg("arg3")) * 60 * 1000, 30 * 60 * 1000);*/
             });
-            methods.Add("queuestop", async (command) =>
+            methods.Add("stopqueue", async (command) =>
             {
                 for (int i = 0; i < queuesRunning.Count; i++)
                 {
                     queuesRunning[i] = false;
                 }
+                await command.Message.Delete();
                 await command.Channel.SendMessage("All Image queues stopped");
             });
             methods.Add("help", async (command) =>
             {
                 await command.Channel.SendMessage(getHelp());
+                await command.Message.Delete();
             });
         }
         APIs.ImgurAPI imgur;
@@ -69,7 +74,11 @@ namespace DiscordTest
 
         public override string getHelp()
         {
-            throw new NotImplementedException();
+            string help = "!pics commands:\n" +
+                "search <query>: query for a random picture with the title of <query>\n" +
+                "queue <query> <time delay>: Create a queue that displays pictures with title <query> that fires every <time delay> minutes.\n" +
+                "stopqueue: stops all the picture queues\n";
+            return help;
         }
     }
 }

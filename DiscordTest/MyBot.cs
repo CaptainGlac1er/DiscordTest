@@ -24,15 +24,6 @@ namespace DiscordTest
                 x.LogLevel = LogSeverity.Info;
                 x.LogHandler = Log;
             });
-            var resetEvent = new AutoResetEvent(true);
-            Timer tm = new Timer((Object state) =>
-            {
-                String getPhotos = getReply("https://api.imgur.com/3/gallery/search/?q_any=meme", "GET");
-                DataType.gallery stuff = getGalleryObject(getPhotos);
-                Random random = new Random();
-                Console.WriteLine("fired");
-                discord.GetChannel(allowedChannel).SendMessage(stuff.data[random.Next(stuff.data.Count)].link);
-            }, resetEvent,30*60*1000, 30 * 60 * 1000); 
             discord.UsingCommands(x=>
             {
                 x.PrefixChar = '!';
@@ -40,7 +31,7 @@ namespace DiscordTest
             });
             discord.MessageReceived += async (s, e) =>
             {
-                Console.WriteLine(e.Message.Channel.Id);
+                Console.WriteLine(e.Message.RawText);
                 if (!e.Message.IsAuthor &&  e.Message.Channel.Id == allowedChannel)
                 {
                     if (e.Message.Text.Contains("meme") && !e.Message.Text.Contains("!meme") && e.Message.IsAuthor)
@@ -50,7 +41,7 @@ namespace DiscordTest
                         Random random = new Random();
                         await e.Channel.SendMessage(stuff.data[random.Next(stuff.data.Count)].link);
                     }
-                    if (e.Message.Text.Contains("sad"))
+                    else if (e.Message.Text.Contains("sad"))
                     {
 
                         String getPhotos = getReply("https://api.imgur.com/3/gallery/search/?q_any=happy", "GET");
@@ -58,6 +49,9 @@ namespace DiscordTest
                         Random random = new Random();
                         
                         await e.Channel.SendMessage(stuff.data[random.Next(stuff.data.Count)].link);
+                    }else if (e.Message.Text.Contains(":smile:"))
+                    {
+                        await e.Channel.SendMessage("You're Welcome. :D");
                     }
                 }
             };
@@ -65,11 +59,11 @@ namespace DiscordTest
             commands.CreateCommand("hello").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Do( async(e) =>{
                 await e.Channel.SendMessage("Hi");
             });
-            commands.CreateCommand("pics").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Optional).Parameter("arg3", ParameterType.Optional).Do( (e) =>
+            commands.CreateCommand("pics").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Optional).Parameter("arg3", ParameterType.Optional).Do((e) =>
             {
                 moduleBuilder.getModule("pics").runCommand(e);
             });
-            commands.CreateCommand("weather").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2").Do((e) =>
+            commands.CreateCommand("weather").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Optional).Do((e) =>
             {
                 moduleBuilder.getModule("weather").runCommand(e); 
             });

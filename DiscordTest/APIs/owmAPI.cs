@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace DiscordTest.APIs
 {
@@ -12,7 +13,9 @@ namespace DiscordTest.APIs
         }
         public DataType.weatherToday querySearch(string search)
         {
-            String getWeather = webAccess.queryWebsiteGET("http://api.openweathermap.org/data/2.5/weather?q=" + search + "&appid=" + System.Configuration.ConfigurationManager.ConnectionStrings["weathertoken"].ToString());
+            String pat = "([0-9]{5})";
+            Match m = Regex.Match(search, pat);
+            String getWeather = webAccess.queryWebsiteGET("http://api.openweathermap.org/data/2.5/weather?" + ((m.Success)? "zip" : "q") + "=" + search + "&appid=" + System.Configuration.ConfigurationManager.ConnectionStrings["weathertoken"].ToString());
             return JsonConvert.DeserializeObject<DataType.weatherToday>(getWeather);
         }
     }
