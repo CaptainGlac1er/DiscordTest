@@ -34,5 +34,21 @@ namespace DiscordTest
             var content = sr.ReadToEnd();
             return content;
         }
+        public String queryWebsitePOST(String url, String postdata){ 
+            var http = (HttpWebRequest)WebRequest.Create(url); 
+            byte[] byteArray = Encoding.UTF8.GetBytes(postdata); 
+            http.Method = "POST"; 
+            http.ContentType = "application/x-www-form-urlencoded"; ; 
+            http.ContentLength = byteArray.Length; 
+            Stream datastream = http.GetRequestStream(); 
+            datastream.Write(byteArray, 0, byteArray.Length); 
+            datastream.Close(); 
+            var response = http.GetResponse(); 
+            var stream = response.GetResponseStream(); 
+            var sr = new StreamReader(stream); 
+            var content = sr.ReadToEnd(); 
+            return content; 
+
+        }
     }
 }

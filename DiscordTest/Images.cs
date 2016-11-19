@@ -29,23 +29,23 @@ namespace DiscordTest
                 int delay;
                 if(command.GetArg(2) == null || !Int32.TryParse(command.GetArg(2), out delay))
                 {
-                    await command.Channel.SendMessage("!meme queue <search> <delay in mins>");
+                    await command.Channel.SendMessage("!pics queue <search> <delay in mins>");
                     return;
                 }
-                await command.Channel.SendMessage(command.GetArg(1) + "queue has been started");
+                await command.Channel.SendMessage(command.GetArg(1) + " queue has been started");
                 int queue = queuesRunning.Count;
                 queuesRunning.Add(true);
                 await command.Message.Delete();
                 while (queuesRunning[queue])
                 {
-                    List<DataType.picture> pics = imgur.querySearch(command.GetArg(2));
+                    List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
                     string link = pics[(new Random()).Next(pics.Count)].link;
                     await command.Channel.SendMessage(link);
                     await Task.Delay(new TimeSpan(0, delay, 0));
                 }
                 /*}, new AutoResetEvent(true), Int32.Parse(command.GetArg("arg3")) * 60 * 1000, 30 * 60 * 1000);*/
             });
-            methods.Add("stopqueue", async (command) =>
+            methods.Add("stopqueues", async (command) =>
             {
                 for (int i = 0; i < queuesRunning.Count; i++)
                 {
