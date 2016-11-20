@@ -11,12 +11,13 @@ namespace DiscordTest
 {
     class Images : Module
     {
-        private List<bool> queuesRunning;
+        private Dictionary<string, bool> queuesRunning;
+        bool queueLocked = false;
         public Images()
         {
             imgur = new APIs.ImgurAPI();
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
-            queuesRunning = new List<bool>();
+            queuesRunning = new Dictionary<string, bool>();
             methods.Add("search", async (command) => {
                 List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
                 await command.Channel.SendMessage(command.User.Name + " searched for " + command.GetArg(1));
@@ -27,30 +28,59 @@ namespace DiscordTest
             });
             methods.Add("queue", async (command) => {
                 int delay;
-                if(command.GetArg(2) == null || !Int32.TryParse(command.GetArg(2), out delay))
+                string query = command.GetArg(1);
+                if (command.GetArg(2) == null || !Int32.TryParse(command.GetArg(2), out delay))
                 {
                     await command.Channel.SendMessage("!pics queue <search> <delay in mins>");
                     return;
                 }
-                await command.Channel.SendMessage(command.GetArg(1) + " queue has been started");
-                int queue = queuesRunning.Count;
-                queuesRunning.Add(true);
                 await command.Message.Delete();
-                while (queuesRunning[queue])
+                if (!queuesRunning.ContainsKey(query))
                 {
-                    List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
-                    string link = pics[(new Random()).Next(pics.Count)].link;
-                    await command.Channel.SendMessage(link);
-                    await Task.Delay(new TimeSpan(0, delay, 0));
+                    await command.Channel.SendMessage(query + " queue has been started");
+                    queuesRunning.Add(query, true);
+                    Thread myThread = new Thread(() =>
+                    {
+                        while (queuesRunning[query])
+                        {
+                            List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
+                            string link = pics[(new Random()).Next(pics.Count)].link;
+                            command.Channel.SendMessage(link);
+                            Thread.Sleep(new TimeSpan(0, delay, 0));
+                            while (queueLocked)
+                                Thread.Sleep(1);
+                        }
+                        queuesRunning.Remove(query);
+                    });
+                    myThread.Start();
+                }else{
+                    await command.Channel.SendMessage(query + " queue has already been started");
                 }
-                /*}, new AutoResetEvent(true), Int32.Parse(command.GetArg("arg3")) * 60 * 1000, 30 * 60 * 1000);*/
+            });
+            methods.Add("stopqueue", async (command) =>
+            {
+                string query = command.GetArg(1);
+                await command.Message.Delete();
+                if (queuesRunning.ContainsKey(query)){
+                    queuesRunning[query] = false;
+                    await command.Channel.SendMessage(query + " queue stopped");
+                }else{
+                    await command.Channel.SendMessage(query + " queue not found");
+                }
             });
             methods.Add("stopqueues", async (command) =>
             {
-                for (int i = 0; i < queuesRunning.Count; i++)
+                queueLocked = true;
+                for(int i = 0; i < queuesRunning.Keys.Count; i++)
                 {
-                    queuesRunning[i] = false;
+                    string entry = queuesRunning.Keys.ToList()[i];
+                    await command.Channel.SendMessage(entry + " queue stopped");
+                    if (queuesRunning.ContainsKey(entry))
+                        queuesRunning[entry] = false;
+                    else
+                        await command.Channel.SendMessage("huh where did it go? " + entry);
                 }
+                queueLocked = false;
                 await command.Message.Delete();
                 await command.Channel.SendMessage("All Image queues stopped");
             });
