@@ -13,11 +13,13 @@ namespace DiscordTest
     {
         private Dictionary<string, bool> queuesRunning;
         bool queueLocked = false;
+        bool stackLocked = false;
         public Images()
         {
             imgur = new APIs.ImgurAPI();
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
             queuesRunning = new Dictionary<string, bool>();
+            Stack<String> previouslySeenImgur = new Stack<string>();
             methods.Add("search", async (command) => {
                 List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
                 await command.Channel.SendMessage(command.User.Name + " searched for " + command.GetArg(1));
@@ -41,11 +43,29 @@ namespace DiscordTest
                     queuesRunning.Add(query, true);
                     Thread myThread = new Thread(() =>
                     {
+                        int tries = 5;
                         while (queuesRunning[query])
                         {
-                            List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
-                            string link = pics[(new Random()).Next(pics.Count)].link;
-                            command.Channel.SendMessage(link);
+                            lock (previouslySeenImgur)
+                            {
+                                List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
+                                string link = pics[(new Random()).Next(pics.Count)].link;
+                                if (!previouslySeenImgur.Contains(link))
+                                {
+                                    tries = 5;
+                                    previouslySeenImgur.Push(link);
+                                    if (previouslySeenImgur.Count > 30)
+                                        previouslySeenImgur.Pop();
+                                    command.Channel.SendMessage(link);
+                                }else
+                                {
+                                    if (tries-- > 0)
+                                        continue;
+                                    else
+                                        command.Channel.SendMessage(query + " queue doesnt have new pic");
+
+                                }
+                            }
                             Thread.Sleep(new TimeSpan(0, delay, 0));
                             while (queueLocked)
                                 Thread.Sleep(1);
