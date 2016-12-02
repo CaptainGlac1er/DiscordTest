@@ -12,8 +12,8 @@ namespace DiscordTest
     class Images : Module
     {
         private Dictionary<string, bool> queuesRunning;
-        bool queueLocked = false;
         bool stackLocked = false;
+        Random random = new Random();
         public Images()
         {
             imgur = new APIs.ImgurAPI();
@@ -44,12 +44,16 @@ namespace DiscordTest
                     Thread myThread = new Thread(() =>
                     {
                         int tries = 5;
-                        while (queuesRunning[query])
+                        bool keepRunning = true;
+                        lock (queuesRunning) {
+                            keepRunning = queuesRunning[query];
+                        }
+                        while (keepRunning)
                         {
                             lock (previouslySeenImgur)
                             {
                                 List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
-                                string link = pics[(new Random()).Next(pics.Count)].link;
+                                string link = pics[random.Next(pics.Count)].link;
                                 if (!previouslySeenImgur.Contains(link))
                                 {
                                     tries = 5;
@@ -67,8 +71,10 @@ namespace DiscordTest
                                 }
                             }
                             Thread.Sleep(new TimeSpan(0, delay, 0));
-                            while (queueLocked)
-                                Thread.Sleep(1);
+                            lock (queuesRunning)
+                            {
+                                keepRunning = queuesRunning[query];
+                            }
                         }
                         queuesRunning.Remove(query);
                     });
@@ -81,8 +87,12 @@ namespace DiscordTest
             {
                 string query = command.GetArg(1);
                 await command.Message.Delete();
-                if (queuesRunning.ContainsKey(query)){
-                    queuesRunning[query] = false;
+                if (queuesRunning.ContainsKey(query))
+                {
+                    lock (queuesRunning)
+                    {
+                        queuesRunning[query] = false;
+                    }
                     await command.Channel.SendMessage(query + " queue stopped");
                 }else{
                     await command.Channel.SendMessage(query + " queue not found");
@@ -90,17 +100,20 @@ namespace DiscordTest
             });
             methods.Add("stopqueues", async (command) =>
             {
-                queueLocked = true;
                 for(int i = 0; i < queuesRunning.Keys.Count; i++)
                 {
                     string entry = queuesRunning.Keys.ToList()[i];
                     await command.Channel.SendMessage(entry + " queue stopped");
                     if (queuesRunning.ContainsKey(entry))
-                        queuesRunning[entry] = false;
+                    {
+                        lock (queuesRunning)
+                        {
+                            queuesRunning[entry] = false;
+                        }
+                    }
                     else
                         await command.Channel.SendMessage("huh where did it go? " + entry);
                 }
-                queueLocked = false;
                 await command.Message.Delete();
                 await command.Channel.SendMessage("All Image queues stopped");
             });
