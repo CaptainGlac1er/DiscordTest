@@ -28,6 +28,20 @@ namespace DiscordTest
                 await command.Message.Delete();
                 return;
             });
+            methods.Add("queues", async (command) =>
+             {
+                 await command.Message.Delete();
+                 await command.Channel.SendMessage(command.Message.User.NicknameMention + " current queues playing are");
+                 StringBuilder output = new StringBuilder("```\r\n");
+                 if (queuesRunning.Keys.Count == 0)
+                     output.Append("No queues running");
+                 foreach(string s in queuesRunning.Keys.ToArray())
+                 {
+                     output.Append(s + "\r\n");
+                 }
+                 output.Append("```");
+                 await command.Channel.SendMessage(output.ToString());
+             });
             methods.Add("queue", async (command) => {
                 int delay;
                 string query = command.GetArg(1);
@@ -73,7 +87,10 @@ namespace DiscordTest
                             Thread.Sleep(new TimeSpan(0, delay, 0));
                             lock (queuesRunning)
                             {
-                                keepRunning = queuesRunning[query];
+                                if (!queuesRunning.ContainsKey(query))
+                                    keepRunning = false;
+                                else
+                                    keepRunning = queuesRunning[query];
                             }
                         }
                         queuesRunning.Remove(query);
@@ -99,21 +116,20 @@ namespace DiscordTest
                 }
             });
             methods.Add("stopqueues", async (command) =>
+        {
+            lock (queuesRunning)
             {
-                for(int i = 0; i < queuesRunning.Keys.Count; i++)
+                foreach (string entry in queuesRunning.Keys.ToArray())
                 {
-                    string entry = queuesRunning.Keys.ToList()[i];
-                    await command.Channel.SendMessage(entry + " queue stopped");
+                    command.Channel.SendMessage(entry + " queue stopped");
                     if (queuesRunning.ContainsKey(entry))
                     {
-                        lock (queuesRunning)
-                        {
-                            queuesRunning[entry] = false;
-                        }
+                        queuesRunning.Remove(entry);
                     }
                     else
-                        await command.Channel.SendMessage("huh where did it go? " + entry);
+                        command.Channel.SendMessage("huh where did it go? " + entry);
                 }
+            }
                 await command.Message.Delete();
                 await command.Channel.SendMessage("All Image queues stopped");
             });
