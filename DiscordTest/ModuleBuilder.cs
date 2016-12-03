@@ -10,10 +10,12 @@ namespace DiscordTest
     {
         Images imageSource;
         Weather weatherSource;
+        Magic8 magic8;
         public ModuleBuilder()
         {
             imageSource = new Images();
             weatherSource = new Weather();
+            magic8 = new Magic8();
         }
         public Module getModule(String command)
         {
@@ -23,6 +25,8 @@ namespace DiscordTest
                     return imageSource;
                 case "weather":
                     return weatherSource;
+                case "magic8":
+                    return magic8;
             }
             return null;
         }

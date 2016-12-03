@@ -12,7 +12,6 @@ namespace DiscordTest
     class Images : Module
     {
         private Dictionary<string, bool> queuesRunning;
-        bool stackLocked = false;
         Random random = new Random();
         public Images()
         {
@@ -140,16 +139,7 @@ namespace DiscordTest
             });
         }
         APIs.ImgurAPI imgur;
-
-        public override async void runCommand(CommandEventArgs command)
-        {
-            if (!methods.ContainsKey(command.GetArg(0)))
-            {
-                await command.Channel.SendMessage(command.GetArg(0) + " is not an command");
-            }
-            else
-                await methods[command.GetArg(0)](command);
-        }
+        
 
         public override string getHelp()
         {

@@ -44,14 +44,7 @@ namespace DiscordTest
                 "get <query>: query weather for location <query>\n";
             return help;
         }
-
-        public override async void runCommand(CommandEventArgs command)
-        {
-            if (!methods.ContainsKey(command.GetArg(0)) || methods[command.GetArg(0)] == null)
-                await command.Channel.SendMessage(command.GetArg(0) + " is not an command");
-            else 
-                await methods[command.GetArg(0)](command);
-        }
+        
         public double convertToFar(double tempKelvin)
         {
             double temp = ((tempKelvin - 273.15) * 1.8 + 32);

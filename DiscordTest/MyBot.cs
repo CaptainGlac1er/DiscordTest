@@ -63,6 +63,10 @@ namespace DiscordTest
             {
                 moduleBuilder.getModule("pics").runCommand(e);
             });
+            commands.CreateCommand("magic8").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1",ParameterType.Multiple).Do((e) =>
+            {
+                moduleBuilder.getModule("magic8").runCommand(e);
+            });
             commands.CreateCommand("weather").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Optional).Do((e) =>
             {
                 moduleBuilder.getModule("weather").runCommand(e); 

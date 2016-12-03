@@ -123,6 +123,7 @@
     <Compile Include="DataTypes\album.cs" />
     <Compile Include="Images.cs" />
     <Compile Include="APIs\ImgurAPI.cs" />
+    <Compile Include="Magic8.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="ModuleBuilder.cs" />
     <Compile Include="MyBot.cs" />
