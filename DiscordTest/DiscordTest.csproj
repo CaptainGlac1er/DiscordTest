@@ -126,6 +126,8 @@
     <Compile Include="Magic8.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="ModuleBuilder.cs" />
+    <Compile Include="Modules\Queue\ImgurQueue.cs" />
+    <Compile Include="Modules\Queue\Queue.cs" />
     <Compile Include="MyBot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

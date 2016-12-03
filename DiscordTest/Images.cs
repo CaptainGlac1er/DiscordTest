@@ -11,14 +11,13 @@ namespace DiscordTest
 {
     class Images : Module
     {
-        private Dictionary<string, bool> queuesRunning;
+        private Dictionary<string, Queue> queuesRunning;
         Random random = new Random();
         public Images()
         {
             imgur = new APIs.ImgurAPI();
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
-            queuesRunning = new Dictionary<string, bool>();
-            Stack<String> previouslySeenImgur = new Stack<string>();
+            queuesRunning = new Dictionary<string, Queue>();
             methods.Add("search", async (command) => {
                 List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
                 await command.Channel.SendMessage(command.User.Name + " searched for " + command.GetArg(1));
@@ -36,7 +35,7 @@ namespace DiscordTest
                      output.Append("No queues running");
                  foreach(string s in queuesRunning.Keys.ToArray())
                  {
-                     output.Append(s + "\r\n");
+                     output.Append(s + " every " + queuesRunning[s].getDelay() + "\r\n");
                  }
                  output.Append("```");
                  await command.Channel.SendMessage(output.ToString());
@@ -53,48 +52,8 @@ namespace DiscordTest
                 if (!queuesRunning.ContainsKey(query))
                 {
                     await command.Channel.SendMessage(query + " queue has been started");
-                    queuesRunning.Add(query, true);
-                    Thread myThread = new Thread(() =>
-                    {
-                        int tries = 5;
-                        bool keepRunning = true;
-                        lock (queuesRunning) {
-                            keepRunning = queuesRunning[query];
-                        }
-                        while (keepRunning)
-                        {
-                            lock (previouslySeenImgur)
-                            {
-                                List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
-                                string link = pics[random.Next(pics.Count)].link;
-                                if (!previouslySeenImgur.Contains(link))
-                                {
-                                    tries = 5;
-                                    previouslySeenImgur.Push(link);
-                                    if (previouslySeenImgur.Count > 30)
-                                        previouslySeenImgur.Pop();
-                                    command.Channel.SendMessage(link);
-                                }else
-                                {
-                                    if (tries-- > 0)
-                                        continue;
-                                    else
-                                        command.Channel.SendMessage(query + " queue doesnt have new pic");
-
-                                }
-                            }
-                            Thread.Sleep(new TimeSpan(0, delay, 0));
-                            lock (queuesRunning)
-                            {
-                                if (!queuesRunning.ContainsKey(query))
-                                    keepRunning = false;
-                                else
-                                    keepRunning = queuesRunning[query];
-                            }
-                        }
-                        queuesRunning.Remove(query);
-                    });
-                    myThread.Start();
+                    queuesRunning.Add(query, new ImgurQueue(query, new TimeSpan(0,delay,0), false, command, imgur));
+                    queuesRunning[query].Start();
                 }else{
                     await command.Channel.SendMessage(query + " queue has already been started");
                 }
@@ -105,10 +64,8 @@ namespace DiscordTest
                 await command.Message.Delete();
                 if (queuesRunning.ContainsKey(query))
                 {
-                    lock (queuesRunning)
-                    {
-                        queuesRunning[query] = false;
-                    }
+                    queuesRunning[query].Stop();
+                    queuesRunning.Remove(query);
                     await command.Channel.SendMessage(query + " queue stopped");
                 }else{
                     await command.Channel.SendMessage(query + " queue not found");
@@ -123,6 +80,7 @@ namespace DiscordTest
                     command.Channel.SendMessage(entry + " queue stopped");
                     if (queuesRunning.ContainsKey(entry))
                     {
+                        queuesRunning[entry].Stop();
                         queuesRunning.Remove(entry);
                     }
                     else
