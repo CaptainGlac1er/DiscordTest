@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using ImgurConnect;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,8 @@ namespace DiscordTest
         private bool allowDuplicates;
         private static Stack<String> previouslySeenImgSrc = new Stack<string>();
         CommandEventArgs command;
-        APIs.ImgurAPI imgur;
-        public ImgurQueue(string query, TimeSpan delay, bool allowDuplicates, CommandEventArgs command, APIs.ImgurAPI imgur) : base()
+        ImgurAPI imgur;
+        public ImgurQueue(string query, TimeSpan delay, bool allowDuplicates, CommandEventArgs command, ImgurAPI imgur) : base()
         {
             this.name = "Image queue for " + query;
             this.query = query;
@@ -34,7 +35,7 @@ namespace DiscordTest
                 {
                     lock (previouslySeenImgSrc)
                     {
-                        List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
+                        List<picture> pics = imgur.querySearch(command.GetArg(1));
                         string link = pics[random.Next(pics.Count)].link;
                         if (!allowDuplicates && !previouslySeenImgSrc.Contains(link))
                         {

@@ -56,50 +56,13 @@ namespace DiscordTest
                 if (!queuesRunning.ContainsKey(query))
                 {
                     await command.Channel.SendMessage(query + " queue has been started");
+                    queuesRunning.Add(query, new ImgurQueue(query, new TimeSpan(0, delay, 0), false, command, imgur));
 
-                    queuesRunning.Add(query, true);
-                    Thread myThread = new Thread(() =>
-                    {
-                        int tries = 5;
-                        bool keepRunning = true;
-                        lock (queuesRunning) {
-                            keepRunning = queuesRunning[query];
-                        }
-                        while (keepRunning)
-                        {
-                            lock (previouslySeenImgur)
-                            {
-                                List<picture> pics = imgur.querySearch(command.GetArg(1));
-                                string link = pics[random.Next(pics.Count)].link;
-                                if (!previouslySeenImgur.Contains(link))
-                                {
-                                    tries = 5;
-                                    previouslySeenImgur.Push(link);
-                                    if (previouslySeenImgur.Count > 30)
-                                        previouslySeenImgur.Pop();
-                                    command.Channel.SendMessage(link);
-                                }else
-                                {
-                                    if (tries-- > 0)
-                                        continue;
-                                    else
-                                        command.Channel.SendMessage(query + " queue doesnt have new pic");
 
-                                }
-                            }
-                            Thread.Sleep(new TimeSpan(0, delay, 0));
-                            lock (queuesRunning)
-                            {
-                                if (!queuesRunning.ContainsKey(query))
-                                    keepRunning = false;
-                                else
-                                    keepRunning = queuesRunning[query];
-                            }
-                        }
-                        queuesRunning.Remove(query);
-                    });
-                    myThread.Start();
-                }else{
+
+                    queuesRunning[query].Start();
+                }
+                else{
                     await command.Channel.SendMessage(query + " queue has already been started");
                 }
             });
