@@ -123,9 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="APIs\owmAPI.cs" />
-    <Compile Include="DataTypes\album.cs" />
     <Compile Include="Images.cs" />
-    <Compile Include="APIs\ImgurAPI.cs" />
     <Compile Include="Magic8.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="ModuleBuilder.cs" />
@@ -136,7 +134,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataTypes\weather.cs" />
-    <Compile Include="APIs\WebAPI.cs" />
     <Compile Include="Weather.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +153,16 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ImgurConnect\ImgurConnect.csproj">
+      <Project>{3b6d05f8-1189-487d-bbb2-dc6f16bc9f4e}</Project>
+      <Name>ImgurConnect</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebConnect\WebConnect.csproj">
+      <Project>{5e23e4a0-6e9b-4d02-a776-8210ab8ec33c}</Project>
+      <Name>WebConnect</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

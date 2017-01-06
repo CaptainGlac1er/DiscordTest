@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using WebConnect;
 
 namespace DiscordTest.APIs
 {

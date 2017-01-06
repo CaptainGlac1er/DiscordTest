@@ -15,7 +15,7 @@ namespace DiscordTest
         protected Dictionary<string, Func<CommandEventArgs, Task>> methods;
         public async void runCommand(CommandEventArgs command)
         {
-            if(command.Args.Length == 0)
+            if (command.Args.Length == 0)
             {
                 await command.Channel.SendMessage(command.Message.User.NicknameMention + " needs a argument for that command");
             }
@@ -24,7 +24,19 @@ namespace DiscordTest
                 await command.Channel.SendMessage(command.GetArg(0) + " is not an command");
             }
             else
-                await methods[command.GetArg(0)](command);
+            {
+                try
+                {
+                    await methods[command.GetArg(0)](command);
+                }catch(Exception e)
+                {
+                    error(e, command);
+                }
+            }
+        }
+        public virtual void error(Exception e, CommandEventArgs command)
+        {
+            command.User.SendMessage(e.Message);
         }
     }
 }
