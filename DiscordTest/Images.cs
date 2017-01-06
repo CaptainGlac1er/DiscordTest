@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using System.Threading;
+using ImgurConnect;
+using System.Collections;
+using System.Net;
 
 namespace DiscordTest
 {
@@ -15,12 +18,13 @@ namespace DiscordTest
         Random random = new Random();
         public Images()
         {
-            imgur = new APIs.ImgurAPI();
+            //gets token and starts an Imgur connection
+            imgur = new ImgurAPI(new ImgurInfo(System.Configuration.ConfigurationManager.ConnectionStrings["imgur"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgurrefresh"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgurclient"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgursecret"].ToString()));
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
             queuesRunning = new Dictionary<string, bool>();
             Stack<String> previouslySeenImgur = new Stack<string>();
             methods.Add("search", async (command) => {
-                List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
+                List<picture> pics = imgur.querySearch(command.GetArg(1));
                 await command.Channel.SendMessage(command.User.Name + " searched for " + command.GetArg(1));
                 string link = pics[(new Random()).Next(pics.Count)].link;
                 await command.Channel.SendMessage(link);
@@ -65,7 +69,7 @@ namespace DiscordTest
                         {
                             lock (previouslySeenImgur)
                             {
-                                List<DataType.picture> pics = imgur.querySearch(command.GetArg(1));
+                                List<picture> pics = imgur.querySearch(command.GetArg(1));
                                 string link = pics[random.Next(pics.Count)].link;
                                 if (!previouslySeenImgur.Contains(link))
                                 {
@@ -138,7 +142,7 @@ namespace DiscordTest
                 await command.Message.Delete();
             });
         }
-        APIs.ImgurAPI imgur;
+        ImgurAPI imgur;
         
 
         public override string getHelp()
@@ -148,6 +152,20 @@ namespace DiscordTest
                 "queue <query> <time delay>: Create a queue that displays pictures with title <query> that fires every <time delay> minutes.\n" +
                 "stopqueue: stops all the picture queues\n";
             return help;
+        }
+
+        public override void error(Exception e, CommandEventArgs command)
+        {
+            command.User.SendMessage(e.GetType().ToString());
+            if(e is WebException)
+            {
+                if(((HttpWebResponse)((WebException)e).Response).StatusCode == HttpStatusCode.Forbidden)
+                {
+                    if(command.User.Id == ulong.Parse(System.Configuration.ConfigurationManager.ConnectionStrings["admin"].ToString()))
+                    command.User.SendMessage(imgur.refreshToken().ToString());
+                    
+                }
+            }
         }
     }
 }
