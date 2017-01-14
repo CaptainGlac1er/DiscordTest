@@ -140,6 +140,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="DiscordConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +158,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DiscordConnect\DiscordConnect.csproj">
+      <Project>{392e84c1-be1c-4a35-a695-22b8686298ce}</Project>
+      <Name>DiscordConnect</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileSystem\gwcFileSystem.csproj">
+      <Project>{da1d74f9-6ac1-4bfe-84af-420c942ddb28}</Project>
+      <Name>gwcFileSystem</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ImgurConnect\ImgurConnect.csproj">
       <Project>{3b6d05f8-1189-487d-bbb2-dc6f16bc9f4e}</Project>
       <Name>ImgurConnect</Name>
@@ -168,11 +179,16 @@
     <Content Include="discordAPI.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DiscordConfigs.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties DiscordConfig_1json__JSONSchema="http://json.schemastore.org/jsonld" />
+    </VisualStudio>
+  </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

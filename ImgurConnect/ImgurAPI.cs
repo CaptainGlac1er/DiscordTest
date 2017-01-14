@@ -11,11 +11,12 @@ namespace ImgurConnect
     public class ImgurAPI
     {
         private WebAPI webAccess;
-        private ImgurInfo connectionToken;
+        private static ImgurInfo connectionToken;
         public ImgurAPI(ImgurInfo token)
         {
             webAccess = new WebAPI();
-            connectionToken = token;
+            if(connectionToken == null)
+                connectionToken = token;
         }
         public List<picture> querySearch(string search)
         {

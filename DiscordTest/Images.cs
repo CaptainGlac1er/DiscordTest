@@ -118,13 +118,26 @@ namespace DiscordTest
 
         public override void error(Exception e, CommandEventArgs command)
         {
-            command.User.SendMessage(e.GetType().ToString());
+            if (command.User.Id == ulong.Parse(System.Configuration.ConfigurationManager.ConnectionStrings["admin"].ToString()))
+            {
+                command.User.SendMessage(e.GetType().ToString());
+                command.User.SendMessage(e.StackTrace);
+            }
             if(e is WebException)
             {
                 if(((HttpWebResponse)((WebException)e).Response).StatusCode == HttpStatusCode.Forbidden)
                 {
-                    if(command.User.Id == ulong.Parse(System.Configuration.ConfigurationManager.ConnectionStrings["admin"].ToString()))
-                    command.User.SendMessage(imgur.refreshToken().ToString());
+                    if (command.User.Id == ulong.Parse(System.Configuration.ConfigurationManager.ConnectionStrings["admin"].ToString()))
+                    {
+                        command.User.SendMessage(imgur.refreshToken().ToString());
+                        runCommand(command);
+                    }
+                    else
+                    {
+                        imgur.refreshToken();
+                        runCommand(command);
+                    }
+                        
                     
                 }
             }

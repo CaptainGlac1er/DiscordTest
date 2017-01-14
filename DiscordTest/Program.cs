@@ -1,4 +1,5 @@
 ﻿using Discord;
+using DiscordConnect;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,15 +10,18 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using gwcFileSystem;
+
+
 
 namespace DiscordTest
 {
     class Program
     {
+        private FileSystem filesystem;
         static void Main(string[] args)
         {
             Program program = new Program();
-            
             while (true)
             {
                 //foreach(String name in program.bots.Keys.ToArray())
@@ -56,9 +60,13 @@ namespace DiscordTest
 
 
         }
-        Dictionary<String, Thread> bots;
+        private Dictionary<String, Thread> bots;
+        private Servers serversAvailable;
         public Program()
         {
+            FileSystem filesystem = new FileSystem(Directory.GetCurrentDirectory());
+            DiscordConnectInfo connect = new DiscordConnectInfo(filesystem.getFile("DiscordConfig.json"));
+            serversAvailable = connect.getServers();
             bots = new Dictionary<string, Thread>();
         }
         public Dictionary<String, Thread> getBots()
@@ -78,15 +86,13 @@ namespace DiscordTest
         public void addNewBot()
         {
             Console.Clear();
-            XmlTextReader xmlReader = new XmlTextReader(Directory.GetCurrentDirectory() + "\\DiscordConfigs.xml");
-            XmlDocument xmlSettings = new XmlDocument();
-            xmlSettings.Load(Directory.GetCurrentDirectory() + "\\DiscordConfigs.xml");
-
-            Dictionary<String, XmlNode> servers = new Dictionary<string, XmlNode>();
-            foreach (XmlNode node in xmlSettings.ChildNodes[1].ChildNodes)
+            Dictionary<String, DiscordConnect.Server> servers = new Dictionary<string, DiscordConnect.Server>();
+            Dictionary<String, DiscordConnect.Channel> channels = new Dictionary<string, DiscordConnect.Channel>();
+            
+            foreach (DiscordConnect.Server Dserver in serversAvailable.servers)
             {
-                servers.Add(node["discordName"].InnerText, node);
-                Console.WriteLine(node["discordName"].InnerText);
+                servers.Add(Dserver.name, Dserver);
+                Console.WriteLine(Dserver.name);
             }
             String server = "";
             Console.WriteLine();
@@ -101,11 +107,10 @@ namespace DiscordTest
                 }
             }
             Console.Clear();
-            Dictionary<String, XmlNode> channels = new Dictionary<string, XmlNode>();
-            foreach (XmlNode node in servers[server]["discordChannels"].ChildNodes)
+            foreach (DiscordConnect.Channel Dchannel in servers[server].channels)
             {
-                channels.Add(node["channelName"].InnerText, node);
-                Console.WriteLine(node["channelName"].InnerText);
+                channels.Add(Dchannel.name, Dchannel);
+                Console.WriteLine(Dchannel.name);
             }
             String channel = "";
             Console.WriteLine();
@@ -117,7 +122,7 @@ namespace DiscordTest
             Console.Clear();
             Thread newThread = new Thread(() =>
             {
-                MyBot myBot = new MyBot(servers[server]["discordToken"].InnerText, ulong.Parse(channels[channel]["token"].InnerText));
+                MyBot myBot = new MyBot(servers[server], ulong.Parse(channels[channel].token));
             });
             bots.Add(server, newThread);
             Console.WriteLine("Start Bot? (y/n)");

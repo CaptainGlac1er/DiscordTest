@@ -1,0 +1,24 @@
+﻿{
+  "servers": [
+    {
+      "name": "George",
+      "token": "MjI1Mzk4NzgxMzY4MDc0MjQx.CsJYFw.t1eY3pNYV18A88BYwLhQtTfCjzY",
+      "channels": [
+        {
+          "name": "main",
+          "token": "225363652943937538"
+        }
+      ]
+    },
+    {
+      "name": "Matt",
+      "token": "MjI3MjU1OTcyODI4MDIwNzM3.CsJYUA.mvFbhJ_B3WRumJOyL4zde6M2Gn0",
+      "channels": [
+        {
+          "name": "main",
+          "token": "227263333898649610"
+        }
+      ]
+    }
+  ]
+}
