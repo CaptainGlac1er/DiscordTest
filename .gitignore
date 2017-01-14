@@ -247,4 +247,4 @@ ModelManifest.xml
 
 DiscordTest/App.config
 DiscordTest/discordAPI.xml
-DiscordTest/discordConfigs.json
+DiscordTest/DiscordConfig.json 
