@@ -246,3 +246,5 @@ ModelManifest.xml
 
 
 DiscordTest/App.config
+DiscordTest/discordAPI.xml
+DiscordTest/discordConfigs.xml
