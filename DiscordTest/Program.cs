@@ -18,16 +18,11 @@ namespace DiscordTest
 {
     class Program
     {
-        private FileSystem filesystem;
         static void Main(string[] args)
         {
             Program program = new Program();
             while (true)
             {
-                //foreach(String name in program.bots.Keys.ToArray())
-                //{
-                //    Console.WriteLine(name + " currently running");
-                //}
                 Console.WriteLine("Type add to add another bot");
                 String add = Console.ReadLine();
                 switch (add)
@@ -54,17 +49,13 @@ namespace DiscordTest
                 }
             }
 
-            //MyBot Matt = new MyBot(System.Configuration.ConfigurationManager.ConnectionStrings["matttoken"].ToString(), ulong.Parse(System.Configuration.ConfigurationManager.ConnectionStrings["mattschannel"].ToString()));
-            //MyBot my = new MyBot(System.Configuration.ConfigurationManager.ConnectionStrings["mytoken"].ToString(), ulong.Parse(System.Configuration.ConfigurationManager.ConnectionStrings["mychannel"].ToString()));
-            Console.ReadLine();
-
-
         }
+        private FileSystem filesystem;
         private Dictionary<String, Thread> bots;
         private Servers serversAvailable;
         public Program()
         {
-            FileSystem filesystem = new FileSystem(Directory.GetCurrentDirectory());
+            filesystem = new FileSystem(Directory.GetCurrentDirectory());
             DiscordConnectInfo connect = new DiscordConnectInfo(filesystem.getFile("DiscordConfig.json"));
             serversAvailable = connect.getServers();
             bots = new Dictionary<string, Thread>();
