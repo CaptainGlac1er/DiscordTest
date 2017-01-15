@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using System.Threading;
-using ImgurConnect;
+using gwcImgurConnect;
 using System.Collections;
 using System.Net;
 

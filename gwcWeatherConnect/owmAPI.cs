@@ -1,23 +1,25 @@
 ﻿using System;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
-using WebConnect;
+using gwcWebConnect;
 
-namespace DiscordTest.APIs
+namespace gwcWeatherConnect
 {
-    class owmAPI
+    public class owmAPI
     {
         private WebAPI webAccess;
-        public owmAPI()
+        private string token;
+        public owmAPI(string token)
         {
+            this.token = token;
             webAccess = new WebAPI();
         }
-        public DataType.weatherToday querySearch(string search)
+        public weatherToday querySearch(string search)
         {
             String pat = "([0-9]{5})";
             Match m = Regex.Match(search, pat);
-            String getWeather = webAccess.queryWebsiteGET("http://api.openweathermap.org/data/2.5/weather?" + ((m.Success)? "zip" : "q") + "=" + search + "&appid=" + System.Configuration.ConfigurationManager.ConnectionStrings["weathertoken"].ToString());
-            return JsonConvert.DeserializeObject<DataType.weatherToday>(getWeather);
+            String getWeather = webAccess.queryWebsiteGET("http://api.openweathermap.org/data/2.5/weather?" + ((m.Success)? "zip" : "q") + "=" + search + "&appid=" + token);
+            return JsonConvert.DeserializeObject<weatherToday>(getWeather);
         }
         public static double convertToFar(double tempKelvin)
         {

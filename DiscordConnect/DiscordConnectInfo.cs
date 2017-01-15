@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DiscordConnect
+namespace gwcDiscordConnect
 {
     public class DiscordConnectInfo
     {
@@ -14,7 +14,6 @@ namespace DiscordConnect
         public DiscordConnectInfo(FileInfo file)
         {
             servers = new Servers();
-            Console.WriteLine(file.FullName);
             using(StreamReader reader = new StreamReader(file.FullName))
             {
                 string json = reader.ReadToEnd();

@@ -10,8 +10,9 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DiscordConnect;
-using WebConnect;
+using gwcDiscordConnect;
+using gwcWebConnect;
+using gwcWeatherConnect;
 
 namespace DiscordTest
 {
@@ -20,7 +21,7 @@ namespace DiscordTest
             DiscordClient discord;
         WebAPI webAPI = new WebAPI();
         List<ulong> allowedChannels = new List<ulong>();
-        public MyBot(DiscordConnect.Server server, ulong allowedChannel)
+        public MyBot(gwcDiscordConnect.Server server, ulong allowedChannel)
         {
             ModuleBuilder moduleBuilder = new ModuleBuilder();
             discord = new DiscordClient(x =>
@@ -79,9 +80,9 @@ namespace DiscordTest
             DataType.gallery data = JsonConvert.DeserializeObject<DataType.gallery>(json);
             return data;
         }
-        DataType.weatherToday getWeatherObject(String json)
+        weatherToday getWeatherObject(String json)
         {
-            return JsonConvert.DeserializeObject<DataType.weatherToday>(json);
+            return JsonConvert.DeserializeObject<weatherToday>(json);
         }
     }
 }

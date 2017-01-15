@@ -1,5 +1,5 @@
 ﻿using Discord;
-using DiscordConnect;
+using gwcDiscordConnect;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -77,10 +77,10 @@ namespace DiscordTest
         public void addNewBot()
         {
             Console.Clear();
-            Dictionary<String, DiscordConnect.Server> servers = new Dictionary<string, DiscordConnect.Server>();
-            Dictionary<String, DiscordConnect.Channel> channels = new Dictionary<string, DiscordConnect.Channel>();
+            Dictionary<String, gwcDiscordConnect.Server> servers = new Dictionary<string, gwcDiscordConnect.Server>();
+            Dictionary<String, gwcDiscordConnect.Channel> channels = new Dictionary<string, gwcDiscordConnect.Channel>();
             
-            foreach (DiscordConnect.Server Dserver in serversAvailable.servers)
+            foreach (gwcDiscordConnect.Server Dserver in serversAvailable.servers)
             {
                 servers.Add(Dserver.name, Dserver);
                 Console.WriteLine(Dserver.name);
@@ -98,7 +98,7 @@ namespace DiscordTest
                 }
             }
             Console.Clear();
-            foreach (DiscordConnect.Channel Dchannel in servers[server].channels)
+            foreach (gwcDiscordConnect.Channel Dchannel in servers[server].channels)
             {
                 channels.Add(Dchannel.name, Dchannel);
                 Console.WriteLine(Dchannel.name);
@@ -121,10 +121,10 @@ namespace DiscordTest
             while (!start)
             {
                 String read = Console.ReadLine();
-                if (read.Equals("y") && (start = true)) ;
+                if (read.Equals("y"))
+                    start = true;
                 if (read.Equals("n"))
                     return;
-
             }
             newThread.Start();
         }
