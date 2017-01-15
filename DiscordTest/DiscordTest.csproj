@@ -168,11 +168,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscordConnect\gwcDiscordConnect.csproj">
+    <ProjectReference Include="..\gwcDiscordConnect\gwcDiscordConnect.csproj">
       <Project>{392e84c1-be1c-4a35-a695-22b8686298ce}</Project>
       <Name>gwcDiscordConnect</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FileSystem\gwcFileSystem.csproj">
+    <ProjectReference Include="..\gwcFileSystem\gwcFileSystem.csproj">
       <Project>{da1d74f9-6ac1-4bfe-84af-420c942ddb28}</Project>
       <Name>gwcFileSystem</Name>
     </ProjectReference>
@@ -180,11 +180,11 @@
       <Project>{4EB90C23-A619-4906-9B73-04BC222B64A6}</Project>
       <Name>gwcWeatherConnect</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ImgurConnect\gwcImgurConnect.csproj">
+    <ProjectReference Include="..\gwcImgurConnect\gwcImgurConnect.csproj">
       <Project>{3b6d05f8-1189-487d-bbb2-dc6f16bc9f4e}</Project>
       <Name>gwcImgurConnect</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WebConnect\gwcWebConnect.csproj">
+    <ProjectReference Include="..\gwcWebConnect\gwcWebConnect.csproj">
       <Project>{5e23e4a0-6e9b-4d02-a776-8210ab8ec33c}</Project>
       <Name>gwcWebConnect</Name>
     </ProjectReference>
