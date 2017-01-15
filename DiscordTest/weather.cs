@@ -14,6 +14,7 @@ namespace DiscordTest
         APIs.owmAPI owm;
         public Weather()
         {
+            command = "weather";
             owm = new APIs.owmAPI();
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
             queuesRunning = new Dictionary<string, Queue>();

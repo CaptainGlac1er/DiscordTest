@@ -18,6 +18,7 @@ namespace DiscordTest
         Random random = new Random();
         public Images()
         {
+            command = "pics";
             //gets token and starts an Imgur connection
             imgur = new ImgurAPI(new ImgurInfo(System.Configuration.ConfigurationManager.ConnectionStrings["imgur"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgurrefresh"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgurclient"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgursecret"].ToString()));
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();

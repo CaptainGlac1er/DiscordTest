@@ -8,27 +8,19 @@ namespace DiscordTest
 {
     class ModuleBuilder
     {
-        Images imageSource;
-        Weather weatherSource;
-        Magic8 magic8;
+        Dictionary<String, Module> modules = new Dictionary<string, Module>();
         public ModuleBuilder()
         {
-            imageSource = new Images();
-            weatherSource = new Weather();
-            magic8 = new Magic8();
+            Images imageSource = new Images();
+            Weather weatherSource = new Weather();
+            Magic8 magic8 = new Magic8();
+            modules.Add(imageSource.getCommand(), imageSource);
+            modules.Add(weatherSource.getCommand(), weatherSource);
+            modules.Add(magic8.getCommand(), magic8);
         }
         public Module getModule(String command)
         {
-            switch (command)
-            {
-                case "pics":
-                    return imageSource;
-                case "weather":
-                    return weatherSource;
-                case "magic8":
-                    return magic8;
-            }
-            return null;
+            return modules[command];
         }
     }
 }
