@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
+using gwcWeatherConnect;
 
 namespace DiscordTest
 {
@@ -11,10 +12,11 @@ namespace DiscordTest
     {
 
         private Dictionary<string, Queue> queuesRunning;
-        APIs.owmAPI owm;
+        owmAPI owm;
         public Weather()
         {
-            owm = new APIs.owmAPI();
+            command = "weather";
+            owm = new owmAPI(System.Configuration.ConfigurationManager.ConnectionStrings["weathertoken"].ToString());
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
             queuesRunning = new Dictionary<string, Queue>();
             methods.Add("get", async (command) =>
@@ -24,14 +26,14 @@ namespace DiscordTest
                     await command.Channel.SendMessage(command.Message.User.Mention + " location was not specified.");
                     return;
                 }
-                DataType.weatherToday curWeather = owm.querySearch(command.GetArg(1));
+                weatherToday curWeather = owm.querySearch(command.GetArg(1));
                 if (curWeather.main == null)
                 {
                     await command.Channel.SendMessage("Location not found");
                 }else
                 {
                     await command.Channel.SendMessage(command.User.Name + " searched for weather for " + command.GetArg(1));
-                    await command.Channel.SendMessage(curWeather.name + " is " + APIs.owmAPI.convertToFar( curWeather.main.temp) + " F");
+                    await command.Channel.SendMessage(curWeather.name + " is " + owmAPI.convertToFar( curWeather.main.temp) + " F");
                 }
                 await command.Message.Delete();
             });

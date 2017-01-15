@@ -12,6 +12,7 @@ namespace DiscordTest
     {
 
         public abstract string getHelp();
+        protected string command;
         protected Dictionary<string, Func<CommandEventArgs, Task>> methods;
         public async void runCommand(CommandEventArgs command)
         {
@@ -33,6 +34,10 @@ namespace DiscordTest
                     error(e, command);
                 }
             }
+        }
+        public String getCommand()
+        {
+            return command;
         }
         public virtual void error(Exception e, CommandEventArgs command)
         {

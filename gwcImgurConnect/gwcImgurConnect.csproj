@@ -51,9 +51,9 @@
     <Compile Include="refreshJSON.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebConnect\WebConnect.csproj">
+    <ProjectReference Include="..\gwcWebConnect\gwcWebConnect.csproj">
       <Project>{5e23e4a0-6e9b-4d02-a776-8210ab8ec33c}</Project>
-      <Name>WebConnect</Name>
+      <Name>gwcWebConnect</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,7 @@ namespace DiscordTest
         static private string[] answers;
         public Magic8()
         {
+            command = "magic8";
             if (answers == null)
                 answers = answerString.Split('&');
             if (random == null)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using System.Threading;
-using ImgurConnect;
+using gwcImgurConnect;
 using System.Collections;
 using System.Net;
 
@@ -18,6 +18,7 @@ namespace DiscordTest
         Random random = new Random();
         public Images()
         {
+            command = "pics";
             //gets token and starts an Imgur connection
             imgur = new ImgurAPI(new ImgurInfo(System.Configuration.ConfigurationManager.ConnectionStrings["imgur"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgurrefresh"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgurclient"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgursecret"].ToString()));
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
@@ -118,13 +119,26 @@ namespace DiscordTest
 
         public override void error(Exception e, CommandEventArgs command)
         {
-            command.User.SendMessage(e.GetType().ToString());
+            if (command.User.Id == ulong.Parse(System.Configuration.ConfigurationManager.ConnectionStrings["admin"].ToString()))
+            {
+                command.User.SendMessage(e.GetType().ToString());
+                command.User.SendMessage(e.StackTrace);
+            }
             if(e is WebException)
             {
                 if(((HttpWebResponse)((WebException)e).Response).StatusCode == HttpStatusCode.Forbidden)
                 {
-                    if(command.User.Id == ulong.Parse(System.Configuration.ConfigurationManager.ConnectionStrings["admin"].ToString()))
-                    command.User.SendMessage(imgur.refreshToken().ToString());
+                    if (command.User.Id == ulong.Parse(System.Configuration.ConfigurationManager.ConnectionStrings["admin"].ToString()))
+                    {
+                        command.User.SendMessage(imgur.refreshToken().ToString());
+                        runCommand(command);
+                    }
+                    else
+                    {
+                        imgur.refreshToken();
+                        runCommand(command);
+                    }
+                        
                     
                 }
             }
