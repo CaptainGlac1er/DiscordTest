@@ -31,12 +31,14 @@ namespace gwcWebConnect
             var content = sr.ReadToEnd();
             return content;
         }
+        
         public WebResponse getWebsiteGET(string url, Dictionary<string, string> headers)
         {
             var http = (HttpWebRequest)WebRequest.Create(url);
             addHeaders(http, headers);
             http.Method = "GET";
-            return http.GetResponse();
+            WebResponse reply = http.GetResponse();
+            return reply;
 
         }
         public WebResponse getWebsitePOST(string url, Dictionary<string, string> headers, string postdata)

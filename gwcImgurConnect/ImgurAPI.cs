@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using gwcWebConnect;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace gwcImgurConnect
 {
@@ -20,10 +21,24 @@ namespace gwcImgurConnect
         }
         public List<picture> querySearch(string search)
         {
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("Authorization", "Bearer " + connectionToken.ImgurConectToken);
-            string json = webAccess.queryWebsiteGET("https://api.imgur.com/3/gallery/search/?q_any=" + search, headers);
-            return JsonConvert.DeserializeObject<gallery>(json).data.ToList();
+            try
+            {
+                Dictionary<string, string> headers = new Dictionary<string, string>();
+                headers.Add("Authorization", "Bearer " + connectionToken.ImgurConectToken);
+                string json = webAccess.queryWebsiteGET("https://api.imgur.com/3/gallery/search/?q_any=" + search, headers);
+                return JsonConvert.DeserializeObject<gallery>(json).data.ToList();
+            }
+            catch (WebException e)
+            {
+                if (((HttpWebResponse)((WebException)e).Response).StatusCode == HttpStatusCode.Forbidden)
+                {
+                    refreshToken();
+                    return querySearch(search);
+                }else
+                {
+                    return new List<picture>();
+                }
+            }
         }
         public ImgurInfo refreshToken()
         {
