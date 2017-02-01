@@ -25,10 +25,18 @@ namespace DiscordTest
             queuesRunning = new Dictionary<string, Queue>();
             methods.Add("search", async (command) => {
                 List<picture> pics = imgur.querySearch(command.GetArg(1));
-                await command.Channel.SendMessage(command.User.Name + " searched for " + command.GetArg(1));
-                string link = pics[(new Random()).Next(pics.Count)].link;
-                await command.Channel.SendMessage(link);
-                await command.Message.Delete();
+                await command.Channel.SendMessage(command.User.Name + " searched for " + command.GetArg(1) + " has " + pics.Count + " results");
+                if (pics.Count > )
+                {
+                    string link = pics[(new Random()).Next(pics.Count)].link;
+                    await command.Channel.SendMessage(link);
+                    await command.Message.Delete();
+                }
+                else
+                {
+                    await command.Message.Delete();
+                }
+
                 return;
             });
             methods.Add("queues", async (command) =>
