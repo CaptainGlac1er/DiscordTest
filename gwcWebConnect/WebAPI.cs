@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
 namespace gwcWebConnect
 {
@@ -34,6 +33,7 @@ namespace gwcWebConnect
         
         public WebResponse getWebsiteGET(string url, Dictionary<string, string> headers)
         {
+            url = HttpUtility.HtmlEncode(url);
             var http = (HttpWebRequest)WebRequest.Create(url);
             addHeaders(http, headers);
             http.Method = "GET";
@@ -43,6 +43,7 @@ namespace gwcWebConnect
         }
         public WebResponse getWebsitePOST(string url, Dictionary<string, string> headers, string postdata)
         {
+            url = HttpUtility.HtmlEncode(url);
             var http = (HttpWebRequest)WebRequest.Create(url);
             addHeaders(http, headers);
             byte[] byteArray = Encoding.UTF8.GetBytes(postdata);

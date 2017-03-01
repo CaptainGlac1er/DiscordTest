@@ -61,6 +61,10 @@ namespace DiscordTest
             {
                 moduleBuilder.getModule("weather").runCommand(e); 
             });
+            commands.CreateCommand("chat").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Unparsed).Do((e) =>
+            {
+                moduleBuilder.getModule("chat").runCommand(e);
+            });
 
             discord.ExecuteAndWait(async () =>
             {
