@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\Admin.cs" />
     <Compile Include="DataTypes\Channel.cs" />
     <Compile Include="DataTypes\Server.cs" />
     <Compile Include="DataTypes\Servers.cs" />

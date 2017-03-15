@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using gwcDiscordConnect;
 using gwcWebConnect;
 using gwcWeatherConnect;
+using gwcFileSystem;
 
 namespace DiscordTest
 {
@@ -21,9 +22,10 @@ namespace DiscordTest
             DiscordClient discord;
         WebAPI webAPI = new WebAPI();
         List<ulong> allowedChannels = new List<ulong>();
-        public MyBot(gwcDiscordConnect.Server server, ulong allowedChannel)
+        public MyBot(gwcDiscordConnect.Server server, ulong allowedChannel, FileSystem filesystem)
         {
-            ModuleBuilder moduleBuilder = new ModuleBuilder();
+
+            ModuleBuilder moduleBuilder = new ModuleBuilder(filesystem, server.admins);
             discord = new DiscordClient(x =>
             {
                 x.LogLevel = LogSeverity.Info;

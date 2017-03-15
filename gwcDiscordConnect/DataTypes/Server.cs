@@ -15,5 +15,6 @@ namespace gwcDiscordConnect
         public string name { get; set; }
         public string token { get; set; }
         public IList<Channel> channels { get; set; }
+        public IList<Admin> admins { get; set; }
     }
 }

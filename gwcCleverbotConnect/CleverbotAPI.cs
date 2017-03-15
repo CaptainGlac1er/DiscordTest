@@ -1,23 +1,29 @@
 ﻿using System;
 using Newtonsoft.Json;
 using gwcWebConnect;
+using System.IO;
 
 namespace gwcCleverbotConnect
 {
     public class CleverbotAPI
     {
+        private static CleverbotToken config;
         private string conversation;
-        private string apiKey;
         private WebAPI webAPI;
-        public CleverbotAPI(string apiKey)
+        public CleverbotAPI(FileInfo file)
         {
             webAPI = new WebAPI();
-            this.apiKey = apiKey;
             conversation = "";
+            if(config == null)
+                using (StreamReader reader = new StreamReader(file.FullName))
+                {
+                    string json = reader.ReadToEnd();
+                    config = JsonConvert.DeserializeObject<CleverbotToken>(json);
+                }
         }
         private cleverbotReply getReplyObject(string input)
         {
-            string url = "http://www.cleverbot.com/getreply?key=" + apiKey + "&input=" + input + "&cs=" + conversation;
+            string url = "http://www.cleverbot.com/getreply?key=" + config.token + "&input=" + input + "&cs=" + conversation;
             string jsonReply = webAPI.queryWebsiteGET(url);
             cleverbotReply output = JsonConvert.DeserializeObject<cleverbotReply>(jsonReply);
             conversation = output.cs;

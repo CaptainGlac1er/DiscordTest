@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using gwcWebConnect;
 using Newtonsoft.Json;
 using System.Net;
+using System.IO;
 
 namespace gwcImgurConnect
 {
@@ -13,11 +14,17 @@ namespace gwcImgurConnect
     {
         private WebAPI webAccess;
         private static ImgurInfo connectionToken;
-        public ImgurAPI(ImgurInfo token)
+        private static FileInfo configFile;
+        public ImgurAPI(FileInfo file)
         {
+            configFile = file;
             webAccess = new WebAPI();
             if(connectionToken == null)
-                connectionToken = token;
+                using (StreamReader reader = new StreamReader(file.FullName))
+                {
+                    string json = reader.ReadToEnd();
+                    connectionToken = JsonConvert.DeserializeObject<ImgurInfo>(json);
+                }
         }
         public List<picture> querySearch(string search)
         {

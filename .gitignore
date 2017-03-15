@@ -245,6 +245,6 @@ ModelManifest.xml
 .fake/
 
 
-DiscordTest/App.config
 DiscordTest/discordAPI.xml
 DiscordTest/DiscordConfig.json 
+/DiscordTest/*

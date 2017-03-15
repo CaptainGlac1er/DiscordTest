@@ -5,15 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
 using gwcCleverbotConnect;
+using gwcFileSystem;
+using System.IO;
 
 namespace DiscordTest
 {
     class Cleverbot : Module
     {
         private CleverbotAPI cleverbot;
-        public Cleverbot()
+        public Cleverbot(FileInfo file)
         {
-            cleverbot = new CleverbotAPI(System.Configuration.ConfigurationManager.ConnectionStrings["cleverbot"].ToString());
+            cleverbot = new CleverbotAPI(file);// (System.Configuration.ConfigurationManager.ConnectionStrings["cleverbot"].ToString());
             command = "chat";
             conversational = true;
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();

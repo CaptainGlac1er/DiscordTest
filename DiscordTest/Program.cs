@@ -50,13 +50,15 @@ namespace DiscordTest
             }
 
         }
+        private FileSystem config;
         private FileSystem filesystem;
         private Dictionary<String, Thread> bots;
         private Servers serversAvailable;
         public Program()
         {
             filesystem = new FileSystem(Directory.GetCurrentDirectory());
-            DiscordConnectInfo connect = new DiscordConnectInfo(filesystem.getFile("DiscordConfig.json"));
+            config = new FileSystem(filesystem.getDirectory("Config"));
+            DiscordConnectInfo connect = new DiscordConnectInfo(config.getFile("DiscordConfig.json"));
             serversAvailable = connect.getServers();
             bots = new Dictionary<string, Thread>();
         }
@@ -113,7 +115,7 @@ namespace DiscordTest
             Console.Clear();
             Thread newThread = new Thread(() =>
             {
-                MyBot myBot = new MyBot(servers[server], ulong.Parse(channels[channel].token));
+                MyBot myBot = new MyBot(servers[server], ulong.Parse(channels[channel].token), config);
             });
             bots.Add(server, newThread);
             Console.WriteLine("Start Bot? (y/n)");

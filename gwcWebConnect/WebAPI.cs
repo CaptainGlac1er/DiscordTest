@@ -56,7 +56,7 @@ namespace gwcWebConnect
             Stream datastream = http.GetRequestStream();
             datastream.Write(byteArray, 0, byteArray.Length);
             datastream.Close();
-            Console.WriteLine(postdata);
+            //Console.WriteLine(postdata);
             WebResponse webResponse = null;
             try
             { 

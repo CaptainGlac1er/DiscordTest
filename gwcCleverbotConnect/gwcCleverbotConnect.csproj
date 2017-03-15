@@ -45,7 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CleverbotAPI.cs" />
-    <Compile Include="cleverbotReply.cs" />
+    <Compile Include="DataTypes\cleverbotReply.cs" />
+    <Compile Include="DataTypes\CleverbotToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
