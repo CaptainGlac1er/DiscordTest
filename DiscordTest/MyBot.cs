@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using gwcDiscordConnect;
 using gwcWebConnect;
 using gwcWeatherConnect;
+using gwcFileSystem;
 
 namespace DiscordTest
 {
@@ -21,9 +22,10 @@ namespace DiscordTest
             DiscordClient discord;
         WebAPI webAPI = new WebAPI();
         List<ulong> allowedChannels = new List<ulong>();
-        public MyBot(gwcDiscordConnect.Server server, ulong allowedChannel)
+        public MyBot(gwcDiscordConnect.Server server, ulong allowedChannel, FileSystem filesystem)
         {
-            ModuleBuilder moduleBuilder = new ModuleBuilder();
+
+            ModuleBuilder moduleBuilder = new ModuleBuilder(filesystem, server.admins);
             discord = new DiscordClient(x =>
             {
                 x.LogLevel = LogSeverity.Info;
@@ -60,6 +62,10 @@ namespace DiscordTest
             commands.CreateCommand("weather").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Optional).Parameter("arg3", ParameterType.Optional).Do((e) =>
             {
                 moduleBuilder.getModule("weather").runCommand(e); 
+            });
+            commands.CreateCommand("chat").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Unparsed).Do((e) =>
+            {
+                moduleBuilder.getModule("chat").runCommand(e);
             });
 
             discord.ExecuteAndWait(async () =>

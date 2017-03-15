@@ -14,6 +14,7 @@ namespace DiscordTest
         public abstract string getHelp();
         protected string command;
         protected Dictionary<string, Func<CommandEventArgs, Task>> methods;
+        protected bool conversational = false;
         public async void runCommand(CommandEventArgs command)
         {
             if (command.Args.Length == 0)
@@ -22,7 +23,14 @@ namespace DiscordTest
             }
             else if (!methods.ContainsKey(command.GetArg(0)))
             {
-                await command.Channel.SendMessage(command.GetArg(0) + " is not an command");
+                if (command.Args.Length == 1 && conversational)
+                {
+                    await methods[""](command);
+                }
+                else
+                {
+                    await command.Channel.SendMessage(command.GetArg(0) + " is not an command");
+                }
             }
             else
             {

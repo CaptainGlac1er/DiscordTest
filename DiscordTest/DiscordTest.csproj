@@ -134,6 +134,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modules\Cleverbot.cs" />
     <Compile Include="Modules\Images.cs" />
     <Compile Include="Modules\Magic8.cs" />
     <Compile Include="Modules\Module.cs" />
@@ -150,10 +151,19 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="DiscordConfig.json">
+    <None Include="Config\WeatherConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\CleverbotConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\DiscordConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="Config\ImgurConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -168,6 +178,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\gwcCleverbotConnect\gwcCleverbotConnect.csproj">
+      <Project>{012c4391-4287-4498-8010-b01cb02479d4}</Project>
+      <Name>gwcCleverbotConnect</Name>
+    </ProjectReference>
     <ProjectReference Include="..\gwcDiscordConnect\gwcDiscordConnect.csproj">
       <Project>{392e84c1-be1c-4a35-a695-22b8686298ce}</Project>
       <Name>gwcDiscordConnect</Name>
@@ -188,11 +202,6 @@
       <Project>{5e23e4a0-6e9b-4d02-a776-8210ab8ec33c}</Project>
       <Name>gwcWebConnect</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="discordAPI.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

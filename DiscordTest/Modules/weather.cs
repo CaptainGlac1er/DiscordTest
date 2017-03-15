@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
 using gwcWeatherConnect;
+using System.IO;
 
 namespace DiscordTest
 {
@@ -13,10 +14,10 @@ namespace DiscordTest
 
         private Dictionary<string, Queue> queuesRunning;
         owmAPI owm;
-        public Weather()
+        public Weather(FileInfo file)
         {
             command = "weather";
-            owm = new owmAPI(System.Configuration.ConfigurationManager.ConnectionStrings["weathertoken"].ToString());
+            owm = new owmAPI(file);
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
             queuesRunning = new Dictionary<string, Queue>();
             methods.Add("get", async (command) =>

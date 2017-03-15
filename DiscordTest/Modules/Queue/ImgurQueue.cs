@@ -13,7 +13,7 @@ namespace DiscordTest
     {
         private string query;
         private bool allowDuplicates;
-        private static Stack<String> previouslySeenImgSrc = new Stack<string>();
+        private static Stack<string> previouslySeenImgSrc = new Stack<string>();
         CommandEventArgs command;
         ImgurAPI imgur;
         public ImgurQueue(string query, TimeSpan delay, bool allowDuplicates, CommandEventArgs command, ImgurAPI imgur) : base()
@@ -30,29 +30,32 @@ namespace DiscordTest
         {
             queueThread = new Thread(() =>
             {
-                int tries = 5;
                 while (running)
                 {
                     lock (previouslySeenImgSrc)
                     {
                         List<picture> pics = imgur.querySearch(command.GetArg(1));
-                        string link = pics[random.Next(pics.Count)].link;
-                        if (!allowDuplicates && !previouslySeenImgSrc.Contains(link))
+                        bool posted = false;
+                        if (!allowDuplicates)
                         {
-                            tries = 5;
-                            previouslySeenImgSrc.Push(link);
-                            if (previouslySeenImgSrc.Count > 30)
-                                previouslySeenImgSrc.Pop();
-                            command.Channel.SendMessage(link);
-                        }
-                        else
+                            foreach (picture pic in pics)
+                            {
+                                if (!previouslySeenImgSrc.Contains(pic.link)) { 
+                                    command.Channel.SendMessage(pic.link);
+                                    previouslySeenImgSrc.Push(pic.link);
+                                    if (previouslySeenImgSrc.Count > 30)
+                                        previouslySeenImgSrc.Pop();
+                                    posted = true;
+                                    break;
+                                }
+                            }
+                        }else if(pics.Count > 0)
                         {
-                            if (!allowDuplicates &&  tries-- > 0)
-                                continue;
-                            else
-                                command.Channel.SendMessage(query + " queue doesnt have new pic");
-
+                            command.Channel.SendMessage(pics[random.Next(pics.Count - 1)].link);
+                            posted = true;
                         }
+                        if (!posted)
+                            command.Channel.SendMessage(query + " queue doesnt have new pic");
                     }
                     Thread.Sleep(delay);
                 }

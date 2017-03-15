@@ -9,6 +9,9 @@ using System.Threading;
 using gwcImgurConnect;
 using System.Collections;
 using System.Net;
+using gwcFileSystem;
+using gwcDiscordConnect;
+using System.IO;
 
 namespace DiscordTest
 {
@@ -16,19 +19,29 @@ namespace DiscordTest
     {
         private Dictionary<string, Queue> queuesRunning;
         Random random = new Random();
-        public Images()
+        private IList<Admin> admins;
+        public Images(FileInfo settings, IList<Admin> admins)
         {
+            this.admins = admins;
             command = "pics";
             //gets token and starts an Imgur connection
-            imgur = new ImgurAPI(new ImgurInfo(System.Configuration.ConfigurationManager.ConnectionStrings["imgur"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgurrefresh"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgurclient"].ToString(), System.Configuration.ConfigurationManager.ConnectionStrings["imgursecret"].ToString()));
+            imgur = new ImgurAPI(settings);
             methods = new Dictionary<string, Func<CommandEventArgs, Task>>();
             queuesRunning = new Dictionary<string, Queue>();
             methods.Add("search", async (command) => {
                 List<picture> pics = imgur.querySearch(command.GetArg(1));
-                await command.Channel.SendMessage(command.User.Name + " searched for " + command.GetArg(1));
-                string link = pics[(new Random()).Next(pics.Count)].link;
-                await command.Channel.SendMessage(link);
-                await command.Message.Delete();
+                await command.Channel.SendMessage(command.User.Name + " searched for " + command.GetArg(1) + " has " + pics.Count + " results");
+                if (pics.Count > 0)
+                {
+                    string link = pics[(new Random()).Next(pics.Count)].link;
+                    await command.Channel.SendMessage(link);
+                    await command.Message.Delete();
+                }
+                else
+                {
+                    await command.Message.Delete();
+                }
+
                 return;
             });
             methods.Add("queues", async (command) =>
@@ -119,11 +132,12 @@ namespace DiscordTest
 
         public override void error(Exception e, CommandEventArgs command)
         {
-            if (command.User.Id == ulong.Parse(System.Configuration.ConfigurationManager.ConnectionStrings["admin"].ToString()))
-            {
-                command.User.SendMessage(e.GetType().ToString());
-                command.User.SendMessage(e.StackTrace);
-            }
+            foreach(Admin a in admins)
+                if (a.id == command.User.Id)
+                {
+                    command.User.SendMessage(e.GetType().ToString());
+                    command.User.SendMessage(e.StackTrace);
+                }
         }
     }
 }

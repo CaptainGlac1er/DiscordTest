@@ -2,23 +2,33 @@
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using gwcWebConnect;
+using System.IO;
 
 namespace gwcWeatherConnect
 {
     public class owmAPI
     {
         private WebAPI webAccess;
-        private string token;
-        public owmAPI(string token)
+        private FileInfo configFile;
+        private WeatherToken config;
+        public owmAPI(FileInfo file)
         {
-            this.token = token;
+            configFile = file;
+            
             webAccess = new WebAPI();
+
+            if (config == null)
+                using (StreamReader reader = new StreamReader(file.FullName))
+                {
+                    string json = reader.ReadToEnd();
+                    config = JsonConvert.DeserializeObject<WeatherToken>(json);
+                }
         }
         public weatherToday querySearch(string search)
         {
             String pat = "([0-9]{5})";
             Match m = Regex.Match(search, pat);
-            String getWeather = webAccess.queryWebsiteGET("http://api.openweathermap.org/data/2.5/weather?" + ((m.Success)? "zip" : "q") + "=" + search + "&appid=" + token);
+            String getWeather = webAccess.queryWebsiteGET("http://api.openweathermap.org/data/2.5/weather?" + ((m.Success)? "zip" : "q") + "=" + search + "&appid=" + config.token);
             return JsonConvert.DeserializeObject<weatherToday>(getWeather);
         }
         public static double convertToFar(double tempKelvin)
