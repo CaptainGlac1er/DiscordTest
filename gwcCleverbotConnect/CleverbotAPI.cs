@@ -17,17 +17,16 @@ namespace gwcCleverbotConnect
         }
         private cleverbotReply getReplyObject(string input)
         {
-            string url = "http://www.cleverbot.com/getreply?key=" + apiKey + "&input=" + input + "&cs=" + conversation + "&callback=ProcessReply";
-            Console.WriteLine(url);
+            string url = "http://www.cleverbot.com/getreply?key=" + apiKey + "&input=" + input + "&cs=" + conversation;
             string jsonReply = webAPI.queryWebsiteGET(url);
             cleverbotReply output = JsonConvert.DeserializeObject<cleverbotReply>(jsonReply);
-            conversation = output.conversation_id;
+            conversation = output.cs;
             return output;
         }
         public string getReply(string input)
         {
             cleverbotReply reply = getReplyObject(input);
-            if (reply.clever_accuracy > 80)
+            if (reply.clever_accuracy > 90)
                 return reply.clever_output;
             else
                 return reply.output;

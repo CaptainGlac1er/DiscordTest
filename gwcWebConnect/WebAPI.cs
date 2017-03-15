@@ -33,18 +33,21 @@ namespace gwcWebConnect
         
         public WebResponse getWebsiteGET(string url, Dictionary<string, string> headers)
         {
-            url = HttpUtility.HtmlEncode(url);
-            var http = (HttpWebRequest)WebRequest.Create(url);
+            var http = (HttpWebRequest)WebRequest.Create(getSerializedURL(url));
             addHeaders(http, headers);
             http.Method = "GET";
             WebResponse reply = http.GetResponse();
             return reply;
 
         }
+        public string getSerializedURL(string url)
+        {
+            return Uri.EscapeUriString(url);
+            //return HttpUtility.UrlPathEncode(url);
+        }
         public WebResponse getWebsitePOST(string url, Dictionary<string, string> headers, string postdata)
         {
-            url = HttpUtility.HtmlEncode(url);
-            var http = (HttpWebRequest)WebRequest.Create(url);
+            var http = (HttpWebRequest)WebRequest.Create(getSerializedURL(url));
             addHeaders(http, headers);
             byte[] byteArray = Encoding.UTF8.GetBytes(postdata);
             http.Method = "POST";
