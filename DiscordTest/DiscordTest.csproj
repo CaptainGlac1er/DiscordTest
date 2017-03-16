@@ -139,19 +139,23 @@
     <Compile Include="Modules\Magic8.cs" />
     <Compile Include="Modules\Module.cs" />
     <Compile Include="Modules\ModuleBuilder.cs" />
+    <Compile Include="Modules\WeatherUnderGround.cs" />
     <Compile Include="Modules\Queue\ImgurQueue.cs" />
     <Compile Include="Modules\Queue\Queue.cs" />
     <Compile Include="Modules\Queue\WeatherQueue.cs" />
     <Compile Include="MyBot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Modules\Weather.cs" />
+    <Compile Include="Modules\OpenWeatherMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Config\WeatherConfig.json">
+    <None Include="Config\WeatherUndergroundConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\OpenWeatherMapConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Config\CleverbotConfig.json">
@@ -207,11 +211,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties DiscordConfig_1json__JSONSchema="http://json.schemastore.org/jsonld" />
-    </VisualStudio>
-  </ProjectExtensions>
+  <ProjectExtensions />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
