@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="DataTypes\Admin.cs" />
     <Compile Include="DataTypes\Channel.cs" />
+    <Compile Include="DataTypes\Command.cs" />
     <Compile Include="DataTypes\Server.cs" />
     <Compile Include="DataTypes\Servers.cs" />
     <Compile Include="DiscordConnectInfo.cs" />

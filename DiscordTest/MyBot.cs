@@ -22,10 +22,10 @@ namespace DiscordTest
             DiscordClient discord;
         WebAPI webAPI = new WebAPI();
         List<ulong> allowedChannels = new List<ulong>();
-        public MyBot(gwcDiscordConnect.Server server, ulong allowedChannel, FileSystem filesystem)
+        public MyBot(gwcDiscordConnect.Server server, FileSystem filesystem)
         {
 
-            ModuleBuilder moduleBuilder = new ModuleBuilder(filesystem, server.admins);
+            ModuleBuilder moduleBuilder = new ModuleBuilder(filesystem, server);
             discord = new DiscordClient(x =>
             {
                 x.LogLevel = LogSeverity.Info;
@@ -39,7 +39,7 @@ namespace DiscordTest
             discord.MessageReceived += async (s, e) =>
             {
                 Console.WriteLine(e.Message.RawText);
-                if (!e.Message.IsAuthor &&  e.Message.Channel.Id == allowedChannel)
+                if (!e.Message.IsAuthor && server.getChannelsCommands().Keys.Contains(e.Channel.Id))
                 {
                     if (e.Message.Text.Contains(":smile:"))
                     {
@@ -48,28 +48,39 @@ namespace DiscordTest
                 }
             };
             var commands = discord.GetService<CommandService>();
-            commands.CreateCommand("hello").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Do( async(e) =>{
+            
+            commands.CreateCommand("hello").Do( async(e) =>{
                 await e.Channel.SendMessage("Hi");
             });
-            commands.CreateCommand("pics").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Optional).Parameter("arg3", ParameterType.Optional).Do((e) =>
+            commands.CreateCommand("pics").Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Optional).Parameter("arg3", ParameterType.Optional).Do((e) =>
             {
-                moduleBuilder.getModule("pics").runCommand(e);
+                Module module = moduleBuilder.getModule("pics", e.Channel.Id);
+                if(module != null)
+                    module.runCommand(e);
             });
-            commands.CreateCommand("magic8").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1",ParameterType.Multiple).Do((e) =>
+            commands.CreateCommand("magic8").Parameter("arg1",ParameterType.Multiple).Do((e) =>
             {
-                moduleBuilder.getModule("magic8").runCommand(e);
+                Module module = moduleBuilder.getModule("magic8", e.Channel.Id);
+                if (module != null)
+                    module.runCommand(e);
             });
-            commands.CreateCommand("owm").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Optional).Parameter("arg3", ParameterType.Optional).Do((e) =>
+            commands.CreateCommand("owm").Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Optional).Parameter("arg3", ParameterType.Optional).Do((e) =>
             {
-                moduleBuilder.getModule("owm").runCommand(e); 
+                Module module = moduleBuilder.getModule("owm", e.Channel.Id);
+                if (module != null)
+                    module.runCommand(e);
             });
-            commands.CreateCommand("wu").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Unparsed).Do((e) =>
+            commands.CreateCommand("wu").Parameter("arg1", ParameterType.Required).Parameter("arg2", ParameterType.Unparsed).Do((e) =>
             {
-                moduleBuilder.getModule("wu").runCommand(e);
+                Module module = moduleBuilder.getModule("wu", e.Channel.Id);
+                if (module != null)
+                    module.runCommand(e);
             });
-            commands.CreateCommand("chat").AddCheck((cmd, user, channel) => channel.Id == allowedChannel || allowedChannel == 0).Parameter("arg1", ParameterType.Unparsed).Do((e) =>
+            commands.CreateCommand("chat").Parameter("arg1", ParameterType.Unparsed).Do((e) =>
             {
-                moduleBuilder.getModule("chat").runCommand(e);
+                Module module = moduleBuilder.getModule("chat", e.Channel.Id);
+                if (module != null)
+                    module.runCommand(e);
             });
 
             discord.ExecuteAndWait(async () =>
