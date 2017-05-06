@@ -44,10 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\WeatherUndergroundData.cs" />
     <Compile Include="owmAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="weather.cs" />
-    <Compile Include="WeatherToken.cs" />
+    <Compile Include="DataTypes\weather.cs" />
+    <Compile Include="DataTypes\WeatherToken.cs" />
+    <Compile Include="wuAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

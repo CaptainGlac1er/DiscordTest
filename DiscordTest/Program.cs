@@ -115,7 +115,7 @@ namespace DiscordTest
             Console.Clear();
             Thread newThread = new Thread(() =>
             {
-                MyBot myBot = new MyBot(servers[server], ulong.Parse(channels[channel].token), config);
+                MyBot myBot = new MyBot(servers[server], config);
             });
             bots.Add(server, newThread);
             Console.WriteLine("Start Bot? (y/n)");

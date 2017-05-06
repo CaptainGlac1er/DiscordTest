@@ -13,7 +13,7 @@ namespace DiscordTest
     {
         private string query;
         private bool allowDuplicates;
-        private static Stack<string> previouslySeenImgSrc = new Stack<string>();
+        private static Queue<string> previouslySeenImgSrc = new Queue<string>();
         CommandEventArgs command;
         ImgurAPI imgur;
         public ImgurQueue(string query, TimeSpan delay, bool allowDuplicates, CommandEventArgs command, ImgurAPI imgur) : base()
@@ -40,11 +40,13 @@ namespace DiscordTest
                         {
                             foreach (picture pic in pics)
                             {
+
+
                                 if (!previouslySeenImgSrc.Contains(pic.link)) { 
                                     command.Channel.SendMessage(pic.link);
-                                    previouslySeenImgSrc.Push(pic.link);
+                                    previouslySeenImgSrc.Enqueue(pic.link);
                                     if (previouslySeenImgSrc.Count > 30)
-                                        previouslySeenImgSrc.Pop();
+                                        previouslySeenImgSrc.Dequeue();
                                     posted = true;
                                     break;
                                 }
