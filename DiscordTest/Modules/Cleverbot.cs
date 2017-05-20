@@ -13,7 +13,7 @@ namespace DiscordTest
     class Cleverbot : Module
     {
         private CleverbotAPI cleverbot;
-        public Cleverbot(FileInfo file)
+        public Cleverbot(FileSystemFile file)
         {
             cleverbot = new CleverbotAPI(file);// (System.Configuration.ConfigurationManager.ConnectionStrings["cleverbot"].ToString());
             command = "chat";

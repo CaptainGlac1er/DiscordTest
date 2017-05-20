@@ -3,26 +3,23 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using gwcWebConnect;
 using System.IO;
+using gwcFileSystem;
 
 namespace gwcWeatherConnect
 {
     public class owmAPI
     {
         private WebAPI webAccess;
-        private FileInfo configFile;
+        private FileSystemFile configFile;
         private WeatherToken config;
-        public owmAPI(FileInfo file)
+        public owmAPI(FileSystemFile file)
         {
             configFile = file;
             
             webAccess = new WebAPI();
 
             if (config == null)
-                using (StreamReader reader = new StreamReader(file.FullName))
-                {
-                    string json = reader.ReadToEnd();
-                    config = JsonConvert.DeserializeObject<WeatherToken>(json);
-                }
+                config = JsonConvert.DeserializeObject<WeatherToken>(file.getFileContents());
         }
         public weatherToday querySearch(string search)
         {

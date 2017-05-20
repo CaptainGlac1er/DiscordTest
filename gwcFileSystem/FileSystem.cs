@@ -31,21 +31,21 @@ namespace gwcFileSystem
                 return null;
             }
         }
-        public FileInfo getFile(String filename)
+        public FileSystemFile getFile(String filename)
         {
             FileInfo[] files = filesystem.GetFiles(filename);
             if (files.Length == 1)
             {
-                return files[0];
+                return new FileSystemFile(files[0]);
             }
             else
             {
-                return null;
+                return new FileSystemFile(null);
             }
         }
-        public FileInfo[] getFiles()
+        public FileSystemFile[] getFiles()
         {
-            return filesystem.GetFiles();
+            return FileSystemFile.ConvertArray(filesystem.GetFiles());
         }
         public DirectoryInfo[] getDirectories()
         {

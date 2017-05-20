@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using gwcWebConnect;
 using System.IO;
+using gwcFileSystem;
 
 namespace gwcCleverbotConnect
 {
@@ -10,16 +11,12 @@ namespace gwcCleverbotConnect
         private static CleverbotToken config;
         private string conversation;
         private WebAPI webAPI;
-        public CleverbotAPI(FileInfo file)
+        public CleverbotAPI(FileSystemFile file)
         {
             webAPI = new WebAPI();
             conversation = "";
             if(config == null)
-                using (StreamReader reader = new StreamReader(file.FullName))
-                {
-                    string json = reader.ReadToEnd();
-                    config = JsonConvert.DeserializeObject<CleverbotToken>(json);
-                }
+                config = JsonConvert.DeserializeObject<CleverbotToken>(file.getFileContents());
         }
         private cleverbotReply getReplyObject(string input)
         {

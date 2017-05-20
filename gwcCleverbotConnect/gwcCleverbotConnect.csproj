@@ -50,6 +50,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\gwcFileSystem\gwcFileSystem.csproj">
+      <Project>{DA1D74F9-6AC1-4BFE-84AF-420C942DDB28}</Project>
+      <Name>gwcFileSystem</Name>
+    </ProjectReference>
     <ProjectReference Include="..\gwcWebConnect\gwcWebConnect.csproj">
       <Project>{5e23e4a0-6e9b-4d02-a776-8210ab8ec33c}</Project>
       <Name>gwcWebConnect</Name>

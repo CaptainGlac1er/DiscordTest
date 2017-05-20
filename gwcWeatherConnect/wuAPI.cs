@@ -1,4 +1,5 @@
-﻿using gwcWebConnect;
+﻿using gwcFileSystem;
+using gwcWebConnect;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,20 +13,16 @@ namespace gwcWeatherConnect
     public class wuAPI
     {
         private WebAPI webAccess;
-        private FileInfo configFile;
+        private FileSystemFile configFile;
         private WeatherToken config;
-        public wuAPI(FileInfo file)
+        public wuAPI(FileSystemFile file)
         {
             configFile = file;
 
             webAccess = new WebAPI();
 
             if (config == null)
-                using (StreamReader reader = new StreamReader(file.FullName))
-                {
-                    string json = reader.ReadToEnd();
-                    config = JsonConvert.DeserializeObject<WeatherToken>(json);
-                }
+                config = JsonConvert.DeserializeObject<WeatherToken>(file.getFileContents());
         }
         public string getCurrentWeather(string search)
         {

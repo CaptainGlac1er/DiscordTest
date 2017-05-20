@@ -18,19 +18,28 @@ namespace DiscordTest
 {
     class Program
     {
+        private static Dictionary<string, string> commands = new Dictionary<string, string>();
         static void Main(string[] args)
         {
             Program program = new Program();
+
+            commands.Add("listen", "listen to new server");
+            commands.Add("mute", "stop listening to server");
+            commands.Add("refresh", "check what servers are running");
+            commands.Add("quit", "check what servers are running");
+
+            Console.WriteLine("DiscordTest by George Colgrove");
+            Console.WriteLine("help for commands");
+            Console.Write(">");
             while (true)
             {
-                Console.WriteLine("Type add to add another bot");
                 String add = Console.ReadLine();
                 switch (add)
                 {
-                    case "add":
+                    case "listen":
                         program.addNewBot();
                         break;
-                    case "remove":
+                    case "mute":
                         String remove = "";
                         while (!program.removeBot(remove))
                         {
@@ -40,13 +49,25 @@ namespace DiscordTest
                                 break;
                         }
                         break;
-                    case "refresh":
+                    case "list":
                         foreach (String name in program.bots.Keys.ToArray())
                         {
                             Console.WriteLine(name + " currently running");
                         }
                         break;
+                    case "help":
+                        foreach (String name in commands.Keys)
+                        {
+                            Console.WriteLine(string.Format("{0, -20} {1}", name, commands[name]));
+                        }
+                        break;
+                    case "quit":
+                        Console.WriteLine("Shutting down...");
+                        foreach (String name in program.bots.Keys.ToArray())
+                            program.removeBot(name);
+                        return;
                 }
+                Console.Write("\n>");
             }
 
         }

@@ -20,7 +20,7 @@ namespace DiscordTest
         private Dictionary<string, Queue> queuesRunning;
         Random random = new Random();
         private IList<Admin> admins;
-        public Images(FileInfo settings, IList<Admin> admins)
+        public Images(FileSystemFile settings, IList<Admin> admins)
         {
             this.admins = admins;
             command = "pics";

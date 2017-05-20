@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using gwcFileSystem;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,14 +12,10 @@ namespace gwcDiscordConnect
     public class DiscordConnectInfo
     {
         private Servers servers;
-        public DiscordConnectInfo(FileInfo file)
+        public DiscordConnectInfo(FileSystemFile file)
         {
             servers = new Servers();
-            using(StreamReader reader = new StreamReader(file.FullName))
-            {
-                string json = reader.ReadToEnd();
-                servers = JsonConvert.DeserializeObject<Servers>(json);
-            }
+            servers = JsonConvert.DeserializeObject<Servers>(file.getFileContents());
 
         }
         public Servers getServers()

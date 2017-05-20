@@ -7,6 +7,8 @@ using gwcWebConnect;
 using Newtonsoft.Json;
 using System.Net;
 using System.IO;
+using gwcFileSystem;
+using System.Threading;
 
 namespace gwcImgurConnect
 {
@@ -14,17 +16,13 @@ namespace gwcImgurConnect
     {
         private WebAPI webAccess;
         private static ImgurInfo connectionToken;
-        private static FileInfo configFile;
-        public ImgurAPI(FileInfo file)
+        private static FileSystemFile configFile;
+        public ImgurAPI(FileSystemFile file)
         {
             configFile = file;
             webAccess = new WebAPI();
             if(connectionToken == null)
-                using (StreamReader reader = new StreamReader(file.FullName))
-                {
-                    string json = reader.ReadToEnd();
-                    connectionToken = JsonConvert.DeserializeObject<ImgurInfo>(json);
-                }
+                connectionToken = JsonConvert.DeserializeObject<ImgurInfo>(configFile.getFileContents());
         }
         public List<picture> querySearch(string search)
         {
@@ -50,6 +48,8 @@ namespace gwcImgurConnect
             string json = webAccess.queryWebsitePOST("https://api.imgur.com/oauth2/token", createHeader(), "grant_type=refresh_token&client_id=" + connectionToken.ClientID + "&client_secret=" + connectionToken.ImgurSecret + "&refresh_token=" + connectionToken.ImgurRefreshToken);
             refreshJSON newInfo = JsonConvert.DeserializeObject<refreshJSON>(json);
             connectionToken = new ImgurInfo(newInfo.access_token, newInfo.refresh_token, connectionToken.ClientID, connectionToken.ImgurSecret);
+            configFile.writeObject(connectionToken);
+            //updateFile();
             return connectionToken;
         }
         private Dictionary<string, string> createHeader()
@@ -58,6 +58,18 @@ namespace gwcImgurConnect
             headers.Add("Authorization", "Bearer " + connectionToken.ImgurConectToken);
             return headers;
 
+        }
+        private void updateFile()
+        {
+            Thread update = new Thread(new ThreadStart(() =>
+            {
+                using (StreamWriter fileWrite = configFile.getStreamWriter()) using (JsonTextWriter jsonWriter = new JsonTextWriter(fileWrite))
+                {
+                    jsonWriter.Formatting = Formatting.Indented;
+                    (new JsonSerializer()).Serialize(jsonWriter, connectionToken);
+                }
+            }));
+            update.Start();
         }
     }
 }
