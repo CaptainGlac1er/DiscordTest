@@ -59,17 +59,5 @@ namespace gwcImgurConnect
             return headers;
 
         }
-        private void updateFile()
-        {
-            Thread update = new Thread(new ThreadStart(() =>
-            {
-                using (StreamWriter fileWrite = configFile.getStreamWriter()) using (JsonTextWriter jsonWriter = new JsonTextWriter(fileWrite))
-                {
-                    jsonWriter.Formatting = Formatting.Indented;
-                    (new JsonSerializer()).Serialize(jsonWriter, connectionToken);
-                }
-            }));
-            update.Start();
-        }
     }
 }
